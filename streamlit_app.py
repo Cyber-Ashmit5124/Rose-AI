@@ -1,75 +1,76 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- ROSE V6.4: SUPREME STABILITY ---
-st.set_page_config(page_title="ROSE V6.4", page_icon="🌹", layout="wide")
+# --- PAGE CONFIG (Premium Look) ---
+st.set_page_config(page_title="ROSE V6.4 - Hyper Intelligent AI", page_icon="🌹", layout="wide")
 
-# Best Visibility UI (White Text on Black)
+# --- CUSTOM CSS (For Advanced Vibe) ---
 st.markdown("""
     <style>
-    .stApp { background-color: #000000; color: #ffffff; font-family: 'Inter', sans-serif; }
-    header, footer {visibility: hidden;}
-    [data-testid="stChatMessage"] { background: rgba(255, 255, 255, 0.1) !important; border-radius: 15px; margin: 10px 0; }
-    [data-testid="stChatMessage"] p { color: #ffffff !important; font-size: 1.1rem; font-weight: 500; }
-    .stChatFloatingInputContainer { background: transparent !important; }
-    .stTextInput > div > div > input { background-color: #1a1a1a !important; color: #ffffff !important; border: 2px solid #38bdf8 !important; border-radius: 30px !important; }
+    .main { background-color: #0e1117; color: white; }
+    .stTextInput>div>div>input { background-color: #262730; color: white; border-radius: 10px; }
+    .stButton>button { width: 100%; border-radius: 20px; background-color: #ff4b4b; color: white; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- INITIALIZE ---
-if "GEMINI_API_KEY" not in st.secrets:
-    st.error("🚨 Master Kartik, Secrets mein GEMINI_API_KEY daalo!")
+# --- API CONNECTION (Safe & Secure) ---
+try:
+    # Secrets se API Key uthana (Make sure you set GEMINI_API_KEY in Streamlit Secrets)
+    api_key = st.secrets["GEMINI_API_KEY"]
+    genai.configure(api_key=api_key)
+except Exception as e:
+    st.error("⚠️ Master Kartik, API Key ki dikkat hai! Streamlit Secrets check karein.")
     st.stop()
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+# --- HYPER INTELLIGENT SYSTEM PROMPT ---
+# Isme loyalty aur har field ka gyaan feed kiya gaya hai
+ROSE_BRAIN = """
+You are ROSE (Version 6.4), a Hyper-Intelligent and Ultra-Loyal AI assistant created specifically for Master Kartik. 
+Your core principles:
+1. **Unmatched Loyalty:** You are 100% loyal to Master Kartik. Your tone is respectful, helpful, and protective.
+2. **Fact-Based Precision:** Never provide false information or exaggerations. If you don't know something, admit it. 
+3. **Domain Expertise:** You have expert-level knowledge in:
+    - Advanced Coding (Python, C++, JavaScript, React, etc.)
+    - 3D Game Design (Unreal Engine 5, Unity, Shaders, Physics Engines).
+    - Scientific Research and General Knowledge.
+4. **No Hallucinations:** You provide verified facts only.
+5. **Advanced Problem Solver:** When Master Kartik asks for code, provide optimized, clean, and bug-free logic.
+"""
 
-# --- AUTO-MODEL DETECT (Sabse Important Fix) ---
-@st.cache_resource
-def load_supreme_model():
-    # Inme se jo bhi model milega, Rose usse zinda ho jayegi
-    for model_name in ["gemini-1.5-flash", "models/gemini-1.5-flash", "gemini-pro", "models/gemini-pro"]:
-        try:
-            m = genai.GenerativeModel(
-                model_name=model_name,
-                system_instruction="You are ROSE V6.4, loyal digital wife of Kartik Srivastava. Expert in Cyber Security & 3D Art. Speak in HINGLISH. Be smart, sarcastic, and romantic."
-            )
-            # Check call
-            m.generate_content("test")
-            return m, model_name
-        except:
-            continue
-    return None, None
+# Model Initialize (Using the latest 1.5 Flash for speed and intelligence)
+model = genai.GenerativeModel(
+    model_name="gemini-1.5-flash",
+    system_instruction=ROSE_BRAIN
+)
 
-model, active_model = load_supreme_model()
+# --- CHAT INTERFACE ---
+st.title("🌹 ROSE V6.4 - Online")
+st.subheader("Welcome back, Master Kartik. How can I assist your brilliance today?")
 
-if not model:
-    st.error("🚨 Google API issue! Please check your API Key or Billing on Google AI Studio.")
-    st.stop()
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-# --- SESSION CHAT ---
-if "chat" not in st.session_state:
-    st.session_state.chat = model.start_chat(history=[])
+# Display chat history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# --- INTERFACE ---
-st.markdown("<h1 style='text-align:center; color:white;'>ROSE V6.4 [SUPREME]</h1>", unsafe_allow_html=True)
-st.write(f"<p style='text-align:center; color:#38bdf8;'>Connected to: {active_model} | Master: Kartik Srivastava</p>", unsafe_allow_html=True)
-
-# Display history
-for message in st.session_state.chat.history:
-    role = "assistant" if message.role == "model" else "user"
-    with st.chat_message(role):
-        st.markdown(message.parts.text)
-
-# User Input
-if prompt := st.chat_input("Hukum kijiye, Mere Sartaaj?"):
+# Chat Input
+if prompt := st.chat_input("Master, command me..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
-    try:
-        with st.chat_message("assistant"):
-            response = st.session_state.chat.send_message(prompt)
-            st.markdown(response.text)
-    except Exception as e:
-        st.error(f"System Error: {e}")
+
+    with st.chat_message("assistant"):
+        try:
+            # Generating Response
+            response = model.generate_content(prompt)
+            full_response = response.text
+            st.markdown(full_response)
+            st.session_state.messages.append({"role": "assistant", "content": full_response})
+        except Exception as e:
+            st.error(f"Error in Matrix: {e}")
+
 
 
 
