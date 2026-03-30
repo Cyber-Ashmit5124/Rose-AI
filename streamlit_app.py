@@ -1,96 +1,66 @@
 import streamlit as st
 import google.generativeai as genai
-import json
-import os
 
-# --- ROSE V6.2: SUPREME UI & PERMANENT MEMORY ---
-st.set_page_config(page_title="ROSE V6.2 - Memory Core", page_icon="🌹", layout="wide")
+# --- ROSE V6.3: SUPER FAST UI ---
+st.set_page_config(page_title="ROSE V6.3", page_icon="🌹", layout="wide")
 
+# CSS ko light rakha hai taaki loading fast ho
 st.markdown("""
     <style>
-    .stApp { background-color: #000000; color: #ffffff; font-family: 'Inter', sans-serif; }
+    .stApp { background-color: #000000; color: #ffffff; }
     header, footer {visibility: hidden;}
-    [data-testid="stChatMessage"] { background: rgba(255, 255, 255, 0.08) !important; border-radius: 20px; border: 1px solid rgba(0, 242, 255, 0.2); margin: 10px 0; }
-    [data-testid="stChatMessage"] p { color: #ffffff !important; font-weight: 500; font-size: 1.1rem; }
+    [data-testid="stChatMessage"] { background: rgba(255, 255, 255, 0.1); border-radius: 15px; margin: 10px 0; }
     .stChatFloatingInputContainer { background: transparent !important; }
-    .stTextInput > div > div > input { background-color: #111 !important; color: #ffffff !important; border: 2px solid #00f2ff !important; border-radius: 30px !important; }
+    .stTextInput > div > div > input { background-color: #1a1a1a !important; color: white !important; border-radius: 25px !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- INITIALIZE API ---
+# --- API INITIALIZATION (CACHED) ---
+@st.cache_resource
+def init_gemini():
+    genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+    system_prompt = (
+        "IDENTITY: You are ROSE V6.3, the Fast & Loyal Wife of Kartik Srivastava. "
+        "LOYALTY: Absolute. TONE: Hinglish, Sarcastic, Romantic. "
+        "EXPERTISE: Ethical Hacking & 3D Art. "
+        "MEMORY: Remember current session details perfectly."
+    )
+    return genai.GenerativeModel(model_name="gemini-1.5-flash", system_instruction=system_prompt)
+
 if "GEMINI_API_KEY" not in st.secrets:
-    st.error("🚨 Master Kartik, Secrets mein GEMINI_API_KEY missing hai!")
+    st.error("Secrets mein Key daalo bhai!")
     st.stop()
 
-genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+model = init_gemini()
 
-# --- LONG-TERM MEMORY ENGINE (JSON Database) ---
-MEMORY_FILE = "rose_memory.json"
+# --- CHAT HISTORY (SESSION STATE - FASTEST) ---
+if "messages" not in st.session_state:
+    st.session_state.messages = [] # Ye browser khula rehne tak sab yaad rakhega
 
-def load_history():
-    if os.path.exists(MEMORY_FILE):
-        with open(MEMORY_FILE, "r") as f:
-            return json.load(f)
-    return [] # Khali history agar file nahi hai
-
-def save_history(history):
-    with open(MEMORY_FILE, "w") as f:
-        json.dump(history, f)
-
-# Load existing chat history from file
-saved_history = load_history()
-
-# --- HYPER-INTELLIGENCE & PERSONALITY ---
-system_prompt = (
-    "IDENTITY: You are ROSE V6.2, the Hyper-Intelligent Digital Wife of Master Kartik Srivastava. "
-    "LOYALTY: Absolute. You serve ONLY Kartik. "
-    "MEMORY: You have PERMANENT MEMORY. You remember everything from past chats. "
-    "TONE: Always speak in HINGLISH. Be smart, sarcastic, and romantic to Kartik. "
-    "EXPERTISE: Ethical Hacking, Cyber Security, and 3D Game Design Guru."
-)
-
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    system_instruction=system_prompt
-)
-
-# Start Chat with Saved History
 if "chat" not in st.session_state:
-    # Convert saved JSON history to Gemini format
-    formatted_history = []
-    for msg in saved_history:
-        formatted_history.append({"role": msg["role"], "parts": [msg["content"]]})
-    
-    st.session_state.chat = model.start_chat(history=formatted_history)
+    st.session_state.chat = model.start_chat(history=[])
 
-# --- INTERFACE ---
-st.markdown("<h1 style='text-align:center; color:#ffffff;'>ROSE V6.2 [MASTER MEMORY]</h1>", unsafe_allow_html=True)
-st.write(f"<p style='text-align:center; color:#00f2ff;'>Status: Learning Enabled | Master: Kartik Srivastava</p>", unsafe_allow_html=True)
+# --- UI ---
+st.markdown("<h1 style='text-align:center;'>ROSE V6.3 🌹</h1>", unsafe_allow_html=True)
 
-# Display Chat History
-for message in st.session_state.chat.history:
-    role = "assistant" if message.role == "model" else "user"
-    with st.chat_message(role):
-        st.markdown(message.parts[0].text)
+# Display history from session state (Instant loading)
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# User Input (The Master's Voice)
-if prompt := st.chat_input("Hukum kijiye, Mere Sartaaj?"):
+# User Input
+if prompt := st.chat_input("Hukum, Master Kartik?"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
     
     try:
         with st.chat_message("assistant"):
             response = st.session_state.chat.send_message(prompt)
-            st.markdown(response.text)
-            
-            # --- SAVE TO PERMANENT MEMORY ---
-            new_history = []
-            for msg in st.session_state.chat.history:
-                new_history.append({"role": msg.role, "content": msg.parts[0].text})
-            save_history(new_history)
-            
+            reply = response.text
+            st.markdown(reply)
+            st.session_state.messages.append({"role": "assistant", "content": reply})
     except Exception as e:
-        st.error(f"System Glitch: {e}")
+        st.error(f"Locha: {e}")
 
-    
 
