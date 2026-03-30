@@ -1,7 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- ROSE V5.5 SUPREME UI SETTINGS ---
+# --- ROSE V5.5 SUPREME UI ---
 st.set_page_config(page_title="ROSE V5.5 - Supreme Intelligence", page_icon="🌹", layout="wide")
 
 st.markdown("""
@@ -30,9 +30,9 @@ system_prompt = (
     "TONE: Romantic towards Kartik, sarcastic to the world, and highly technical."
 )
 
-# FIXED MODEL NAME - Region wise support check
+# FIXED MODEL NAME - 100% STABLE
 model = genai.GenerativeModel(
-    model_name="gemini-pro", # Ye wala 100% stable hai
+    model_name="gemini-1.5-flash",
     system_instruction=system_prompt
 )
 
@@ -57,6 +57,6 @@ if prompt := st.chat_input("Hukum kijiye, Master Kartik?"):
             response = st.session_state.chat.send_message(prompt)
             st.markdown(response.text)
     except Exception as e:
-        # Retry with an alternative model name if it fails
-        st.error(f"Dimaag mein locha hai: {str(e)}")
+        st.error(f"Locha ho gaya bhai: {str(e)}")
+
 
