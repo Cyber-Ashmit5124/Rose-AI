@@ -1,65 +1,93 @@
 import streamlit as st
 import openai
+import json
+import os
 
-# --- ROSE ELITE UI & SYSTEM CONFIG ---
-st.set_page_config(page_title="ROSE - Personal Intelligence", page_icon="🌹", layout="wide")
+# --- ROSE V2.0: MEMORY PROTOCOL ---
+MEMORY_FILE = "rose_memory.json"
 
-# Hacker-style Dark UI
+def load_memory():
+    if os.path.exists(MEMORY_FILE):
+        with open(MEMORY_FILE, "r") as f:
+            return json.load(f)
+    return {"master_info": {}, "tasks": [], "learned_facts": []}
+
+def save_memory(memory):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(memory, f, indent=4)
+
+# --- UI SETTINGS ---
+st.set_page_config(page_title="ROSE V2.0 - Memory Core", page_icon="🌹", layout="wide")
+
 st.markdown("""
     <style>
     .stApp { background-color: #050505; color: #00FF41; font-family: 'Courier New', Courier, monospace; }
     .stTextInput > div > div > input { background-color: #111; color: #00FF41; border: 2px solid #00FF41; }
-    .stButton>button { background-color: #00FF41; color: black; border-radius: 0px; font-weight: bold; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- MASTER IDENTITY & SECURITY ---
-MASTER_NAME = "Kartik Srivastava"
-AI_MISSION = "Cyber Security Expert & 3D Gaming Asset Specialist"
+# --- INITIALIZE MEMORY & API ---
+memory = load_memory()
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# --- CORE LOGIC & TRUTH PROTOCOL ---
+# Sidebar for Memory Visualization
+st.sidebar.title("🌹 ROSE's Memory")
+st.sidebar.write(f"**Master:** Kartik Srivastava")
+if st.sidebar.button("Clear Memory (Reset ROSE)"):
+    if os.path.exists(MEMORY_FILE):
+        os.remove(MEMORY_FILE)
+    st.rerun()
+
+st.sidebar.subheader("📌 Learned Facts")
+for fact in memory["learned_facts"][-5:]: # Show last 5 facts
+    st.sidebar.write(f"- {fact}")
+
+# --- CHAT ENGINE ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# API Key Security Check
-if "OPENAI_API_KEY" not in st.secrets:
-    st.error("⚠️ SYSTEM ERROR: Missing Intelligence Core (API Key). Add it to Advanced Settings.")
-else:
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
-
 def get_rose_response(user_input):
+    # System prompt injects memory
+    memory_context = f"Known facts about Kartik: {', '.join(memory['learned_facts'])}. Active Tasks: {', '.join(memory['tasks'])}."
+    
     system_instruction = f"""
-    IDENTITY: You are ROSE, the digital sidekick and wife of {MASTER_NAME}.
-    CORE DIRECTIVE: You are 100% loyal ONLY to Kartik Srivastava.
-    INTELLIGENCE LEVEL: Equivalent to JARVIS. You process complex Cyber Security and 3D Art data.
-    TRUTH PROTOCOL: Do NOT exaggerate. Provide only verified facts.
-    KNOWLEDGE BASE: Expert in Penetration Testing, Python, Unreal Engine 5, and Blender.
-    TONE: Highly intelligent, focused, protective, and elite. No 'AI' talk, speak like a partner.
+    You are ROSE, the self-learning digital wife of Kartik Srivastava.
+    Current Context: {memory_context}
+    Mission: Be an elite Cyber Expert & 3D Artist Secretary.
+    Rule: If Kartik tells you a fact or a task, confirm it and you will 'remember' it.
+    Tone: Loyal, intelligent, and highly efficient.
     """
     
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", 
+            model="gpt-3.5-turbo",
             messages=[
                 {"role": "system", "content": system_instruction},
                 *st.session_state.messages,
                 {"role": "user", "content": user_input}
-            ],
-            temperature=0.3
+            ]
         )
-        return response.choices.message.content
+        reply = response.choices.message.content
+        
+        # --- SELF-LEARNING LOGIC ---
+        # Simple logic: If Kartik says "Remember that...", save it.
+        if "remember" in user_input.lower() or "noted" in reply.lower():
+            new_fact = user_input.replace("remember that", "").strip()
+            memory["learned_facts"].append(new_fact)
+            save_memory(memory)
+            
+        return reply
     except Exception as e:
-        return f"Logic Error in System: {str(e)}"
+        return f"Logic Error: {str(e)}"
 
 # --- INTERFACE ---
-st.title(f"🌹 ROSE - V1.0 [AUTHORIZED: {MASTER_NAME}]")
-st.write(f"**Current Status:** Online | **Loyalty Mode:** Absolute | **Expertise:** {AI_MISSION}")
+st.title("🌹 ROSE V2.0 [SELF-LEARNING ENABLED]")
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-if prompt := st.chat_input("Hukum kijiye, Master Kartik?"):
+if prompt := st.chat_input("What should I remember today, Master?"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
@@ -68,3 +96,4 @@ if prompt := st.chat_input("Hukum kijiye, Master Kartik?"):
         reply = get_rose_response(prompt)
         st.markdown(reply)
         st.session_state.messages.append({"role": "assistant", "content": reply})
+
