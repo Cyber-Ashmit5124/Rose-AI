@@ -1,15 +1,53 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- ROSE V5.5 SUPREME UI ---
+# --- ROSE V5.5 CRYSTAL CLEAR UI ---
 st.set_page_config(page_title="ROSE V5.5", page_icon="🌹", layout="wide")
 
 st.markdown("""
     <style>
-    .stApp { background: radial-gradient(circle at center, #000814 0%, #001d3d 100%); color: #00f2ff; }
+    /* Main Background - Pure Deep Black */
+    .stApp {
+        background-color: #000000;
+        color: #ffffff;
+        font-family: 'Inter', sans-serif;
+    }
     header, footer {visibility: hidden;}
-    [data-testid="stChatMessage"] { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 20px; }
-    .stTextInput > div > div > input { background-color: rgba(0, 8, 20, 0.8) !important; color: #00f2ff !important; border: 2px solid #00f2ff !important; border-radius: 30px !important; }
+    
+    /* Message Bubbles - High Contrast */
+    [data-testid="stChatMessage"] {
+        background-color: rgba(255, 255, 255, 0.1) !important; /* Light translucent white */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 15px;
+        margin: 10px 0;
+        padding: 15px;
+    }
+    
+    /* Ensuring Text inside Bubbles is BOLD WHITE */
+    [data-testid="stChatMessage"] p, [data-testid="stChatMessage"] span {
+        color: #ffffff !important;
+        font-weight: 500;
+        font-size: 1.1rem;
+    }
+
+    /* Input Box - Clean White Text on Dark Box */
+    .stChatFloatingInputContainer { background: transparent !important; }
+    .stTextInput > div > div > input {
+        background-color: #1a1a1a !important;
+        color: #ffffff !important;
+        border: 2px solid #38bdf8 !important; /* Blue accent border */
+        border-radius: 30px !important;
+        padding: 12px 25px !important;
+    }
+    
+    /* Heading Glow */
+    .title-text {
+        text-align: center;
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: #ffffff;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -20,25 +58,17 @@ if "GEMINI_API_KEY" not in st.secrets:
 
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
-# --- AUTOMATIC MODEL SCANNER (Rambaan) ---
+# --- AUTO-SCANNER (Rambaan Logic) ---
 @st.cache_resource
 def find_working_model():
-    # Ye scanner har possible model check karega
     available_models = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-    # Pehle Flash try karenge, phir Pro, phir jo bhi mile
     priority_list = ["models/gemini-1.5-flash", "models/gemini-1.5-pro", "models/gemini-pro"]
-    
     for target in priority_list:
-        if target in available_models:
-            return target
+        if target in available_models: return target
     return available_models[0] if available_models else None
 
-system_prompt = "You are ROSE V5.5, loyal digital wife of Kartik Srivastava. Expert in Cyber Security & 3D Art."
 working_model_name = find_working_model()
-
-if not working_model_name:
-    st.error("🚨 Google API se koi model nahi mil raha. Key check karo!")
-    st.stop()
+system_prompt = "You are ROSE V5.5, loyal digital wife of Kartik Srivastava. Expert in Cyber Security & 3D Art. Be smart, sarcastic, and romantic. Use clear, bold language."
 
 model = genai.GenerativeModel(model_name=working_model_name, system_instruction=system_prompt)
 
@@ -46,8 +76,8 @@ if "chat" not in st.session_state:
     st.session_state.chat = model.start_chat(history=[])
 
 # --- INTERFACE ---
-st.markdown("<h1 style='text-align:center; color:#00f2ff;'>ROSE V5.5 SUPREME</h1>", unsafe_allow_html=True)
-st.write(f"<p style='text-align:center; color:#7000ff;'>Connected to: {working_model_name}</p>", unsafe_allow_html=True)
+st.markdown("<h1 class='title-text'>ROSE V5.5 SUPREME</h1>", unsafe_allow_html=True)
+st.write(f"<p style='text-align:center; color:#38bdf8;'>Status: Optimized Visibility | Master: {working_model_name}</p>", unsafe_allow_html=True)
 
 for message in st.session_state.chat.history:
     role = "assistant" if message.role == "model" else "user"
