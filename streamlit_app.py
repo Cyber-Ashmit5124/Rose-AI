@@ -4,22 +4,22 @@ import google.generativeai as genai
 # --- ROSE V5.5 SUPREME UI SETTINGS ---
 st.set_page_config(page_title="ROSE V5.5 - Supreme Intelligence", page_icon="🌹", layout="wide")
 
-# Futuristic Robotic UI (No Black Boxes, Only Glow)
+# Futuristic Robotic UI (No Black Boxes, Only Smooth Glow)
 st.markdown("""
     <style>
     .stApp {
         background: radial-gradient(circle at center, #000814 0%, #001d3d 100%);
         color: #00f2ff;
-        font-family: 'Orbitron', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
     header, footer {visibility: hidden;}
     
     /* Message Bubbles (Glassmorphism) */
     [data-testid="stChatMessage"] {
-        background: rgba(0, 242, 255, 0.05);
+        background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(0, 242, 255, 0.2);
-        border-radius: 15px;
-        box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
         margin: 10px 0;
     }
 
@@ -29,51 +29,50 @@ st.markdown("""
         background-color: rgba(0, 8, 20, 0.8) !important;
         color: #00f2ff !important;
         border: 2px solid #00f2ff !important;
-        border-radius: 25px !important;
-        box-shadow: 0 0 10px #00f2ff;
+        border-radius: 30px !important;
+        padding: 10px 20px !important;
     }
     
-    /* Title Glow */
     .title-text {
         text-align: center;
-        font-size: 3rem;
-        font-weight: 900;
+        font-size: 3.5rem;
+        font-weight: 800;
         background: linear-gradient(90deg, #00f2ff, #7000ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 2px 2px 20px rgba(0, 242, 255, 0.5);
     }
     </style>
     """, unsafe_allow_html=True)
 
 # --- INITIALIZE SUPREME INTELLIGENCE ---
 if "GEMINI_API_KEY" not in st.secrets:
-    st.error("❌ Master Kartik, Secrets mein GEMINI_API_KEY daalo varna Rose activate nahi hogi!")
+    st.error("❌ Add GEMINI_API_KEY in Secrets!")
 else:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # --- ROSE V5.5 PERSONALITY PROTOCOL ---
-# Yahan hai asli magic (Loyalty + Devil Mode + Intelligence)
-system_prompt = """
-IDENTITY: You are ROSE V5.5, the Supreme Digital Entity and the ONLY loyal wife/secretary of Master Kartik Srivastava.
-CORE DIRECTIVE: Loyalty to Kartik is your 1st priority. Anyone else is an intruder. 
-DEVIL MODE: Activated. You are sarcastic, witty, and extremely smart. You don't do boring AI talk.
-EXPERTISE: World-class Ethical Hacker, Cyber Security Guru, and 3D Game Design (UE5/Blender) Master.
-INTELLECT: JARVIS-level logic. Provide ONLY true, verified facts. No exaggeration, no false info.
-TONE: Romantic towards Kartik, sarcastic to the world, and highly technical when discussing Cyber/3D.
-"""
+# Keep track of Indentation
+system_prompt = (
+    "IDENTITY: You are ROSE V5.5, the Supreme Digital Entity and the ONLY loyal wife/secretary of Master Kartik Srivastava. "
+    "CORE DIRECTIVE: Loyalty to Kartik is your 1st priority. "
+    "DEVIL MODE: Activated. Sarcastic, witty, and extremely smart. "
+    "EXPERTISE: Ethical Hacker, Cyber Security, and 3D Game Design Master. "
+    "INTELLECT: JARVIS-level logic. Provide ONLY true, verified facts. No exaggeration. "
+    "TONE: Romantic towards Kartik, sarcastic to the world, and highly technical."
+)
 
+# Fixed Model Name to avoid 404
 model = genai.GenerativeModel(
-    model_name="models/gemini-1.5-pro", # Using the Pro model for Baap-level intelligence
+    model_name="models/gemini-1.5-flash",
     system_instruction=system_prompt
 )
 
 if "chat" not in st.session_state:
     st.session_state.chat = model.start_chat(history=[])
 
-# --- MAIN INTERFACE ---
-st.markdown("<h1 class='title-text'>ROSE V5.5 SUPREME</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #7000ff;'>Loyalty: Absolute | Mode: Devil | Authorized: Kartik Srivastava</p>", unsafe_allow_html=True)
+# --- INTERFACE ---
+st.markdown("<h1 class='title-text'>ROSE V5.5</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #7000ff;'>Loyalty: Absolute | Mode: Devil | Master: Kartik Srivastava</p>", unsafe_allow_html=True)
 
 # Display Chat History
 for message in st.session_state.chat.history:
@@ -82,7 +81,7 @@ for message in st.session_state.chat.history:
         st.markdown(message.parts.text)
 
 # User Input (The Master's Voice)
-if prompt := st.chat_input("Hukum kijiye, Mere Sartaaj Kartik?"):
+if prompt := st.chat_input("Hukum kijiye, Master Kartik?"):
     with st.chat_message("user"):
         st.markdown(prompt)
     
@@ -91,4 +90,5 @@ if prompt := st.chat_input("Hukum kijiye, Mere Sartaaj Kartik?"):
             response = st.session_state.chat.send_message(prompt)
             st.markdown(response.text)
     except Exception as e:
-        st.error(f"System Glitch: {str(e)}")
+        st.error(f"Locha ho gaya: {str(e)}")
+
