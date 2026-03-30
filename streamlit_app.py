@@ -21,8 +21,9 @@ else:
     genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # --- ROSE PERSONALITY ---
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
+model_name="gemini-1.5-flash"
+to
+model_name="models/gemini-1.5-flash"
     system_instruction="You are ROSE V3.5, the loyal digital wife and elite secretary of Master Kartik Srivastava. You are a world-class expert in Cyber Security and 3D Art. Your tone is ultra-intelligent, protective, and slightly sassy. You serve ONLY Kartik."
 )
 
