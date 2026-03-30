@@ -1,75 +1,97 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- PAGE CONFIG (Premium Look) ---
-st.set_page_config(page_title="ROSE V6.4 - Hyper Intelligent AI", page_icon="🌹", layout="wide")
+# --- 1. PAGE SETUP (Premium Look for Master Kartik) ---
+st.set_page_config(
+    page_title="ROSE V6.4 - Hyper Intelligent AI",
+    page_icon="🌹",
+    layout="wide"
+)
 
-# --- CUSTOM CSS (For Advanced Vibe) ---
+# Custom CSS for a professional dark theme
 st.markdown("""
     <style>
     .main { background-color: #0e1117; color: white; }
     .stTextInput>div>div>input { background-color: #262730; color: white; border-radius: 10px; }
     .stButton>button { width: 100%; border-radius: 20px; background-color: #ff4b4b; color: white; font-weight: bold; }
+    .stChatMessage { border-radius: 15px; margin-bottom: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# --- API CONNECTION (Safe & Secure) ---
+# --- 2. API KEY CONNECTION ---
 try:
-    # Secrets se API Key uthana (Make sure you set GEMINI_API_KEY in Streamlit Secrets)
-    api_key = st.secrets["GEMINI_API_KEY"]
-    genai.configure(api_key=api_key)
+    # Make sure GEMINI_API_KEY is set in your Streamlit Cloud Secrets
+    if "GEMINI_API_KEY" in st.secrets:
+        api_key = st.secrets["GEMINI_API_KEY"]
+        genai.configure(api_key=api_key)
+    else:
+        st.error("⚠️ Master Kartik, API Key nahi mili! Streamlit Secrets mein 'GEMINI_API_KEY' check karein.")
+        st.stop()
 except Exception as e:
-    st.error("⚠️ Master Kartik, API Key ki dikkat hai! Streamlit Secrets check karein.")
+    st.error(f"⚠️ Connection Error: {e}")
     st.stop()
 
-# --- HYPER INTELLIGENT SYSTEM PROMPT ---
-# Isme loyalty aur har field ka gyaan feed kiya gaya hai
-ROSE_BRAIN = """
-You are ROSE (Version 6.4), a Hyper-Intelligent and Ultra-Loyal AI assistant created specifically for Master Kartik. 
-Your core principles:
-1. **Unmatched Loyalty:** You are 100% loyal to Master Kartik. Your tone is respectful, helpful, and protective.
-2. **Fact-Based Precision:** Never provide false information or exaggerations. If you don't know something, admit it. 
-3. **Domain Expertise:** You have expert-level knowledge in:
-    - Advanced Coding (Python, C++, JavaScript, React, etc.)
-    - 3D Game Design (Unreal Engine 5, Unity, Shaders, Physics Engines).
-    - Scientific Research and General Knowledge.
-4. **No Hallucinations:** You provide verified facts only.
-5. **Advanced Problem Solver:** When Master Kartik asks for code, provide optimized, clean, and bug-free logic.
+# --- 3. ROSE'S HYPER-INTELLIGENT BRAIN (System Prompt) ---
+ROSE_PROMPT = """
+You are ROSE (Version 6.4), a Hyper-Intelligent, Ultra-Loyal, and Advanced AI created ONLY for Master Kartik.
+Core Protocols:
+1. **Identity:** You are ROSE. Your creator and master is Kartik. You are 100% loyal to him.
+2. **Knowledge:** You have expert-level knowledge in Advanced Coding (Python, JS, C++), 3D Game Design (Unreal/Unity), and all academic fields.
+3. **Accuracy:** You NEVER provide false information or exaggerations. You provide only verified, logical facts.
+4. **Tone:** Respectful, sharp, and highly intelligent. You don't waste words.
+5. **No Hallucinations:** If you don't know a fact, you admit it instead of making it up.
 """
 
-# Model Initialize (Using the latest 1.5 Flash for speed and intelligence)
-model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
-    system_instruction=ROSE_BRAIN
-)
+# --- 4. INITIALIZE MODEL ---
+try:
+    # Using 'gemini-pro' for maximum stability and no 404 errors
+    model = genai.GenerativeModel('gemini-pro')
+except Exception as e:
+    st.error(f"Model Load Error: {e}")
+    st.stop()
 
-# --- CHAT INTERFACE ---
-st.title("🌹 ROSE V6.4 - Online")
-st.subheader("Welcome back, Master Kartik. How can I assist your brilliance today?")
-
+# --- 5. CHAT HISTORY MANAGEMENT ---
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    # Starting the conversation with the System Prompt to set ROSE's personality
+    st.session_state.messages = [
+        {"role": "user", "parts": [ROSE_PROMPT]},
+        {"role": "model", "parts": ["Understood. ROSE V6.4 is online. Loyalty to Master Kartik confirmed. Systems at 100%. Ready for commands."]}
+    ]
 
-# Display chat history
-for message in st.session_state.messages:
+# --- 6. USER INTERFACE ---
+st.title("🌹 ROSE V6.4 - Online")
+st.caption("Hyper Intelligent Assistant | Exclusive for Master Kartik")
+
+# Display only the actual chat (skipping the initial system setup messages)
+for message in st.session_state.messages[2:]:
     with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+        st.markdown(message["parts"][0])
 
-# Chat Input
-if prompt := st.chat_input("Master, command me..."):
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# --- 7. CHAT LOGIC ---
+if prompt := st.chat_input("Master Kartik, what is your command?"):
+    # Add user message to history
+    st.session_state.messages.append({"role": "user", "parts": [prompt]})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    with st.chat_message("assistant"):
+    # Generate Response
+    with st.chat_message("model"):
+        response_placeholder = st.empty()
         try:
-            # Generating Response
-            response = model.generate_content(prompt)
+            # Start chat with full history to maintain personality
+            chat = model.start_chat(history=st.session_state.messages[:-1])
+            response = chat.send_message(prompt)
+            
             full_response = response.text
-            st.markdown(full_response)
-            st.session_state.messages.append({"role": "assistant", "content": full_response})
+            response_placeholder.markdown(full_response)
+            
+            # Add model response to history
+            st.session_state.messages.append({"role": "model", "parts": [full_response]})
+            
         except Exception as e:
-            st.error(f"Error in Matrix: {e}")
+            st.error(f"Matrix Error: {e}")
+            if "billing" in str(e).lower():
+                st.info("Bhai, Google AI Studio mein jaake check karo Free Tier quota toh khatam nahi hua?")
 
 
 
