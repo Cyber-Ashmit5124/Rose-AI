@@ -1,82 +1,83 @@
 import streamlit as st
-import webbrowser
 import time
-import random
+import webbrowser
 from datetime import datetime
 
 # ==========================================
-# CORE CONFIG: THE OMNIPOTENT ROSE PROTOCOL
+# CORE CONFIG: THE SUPREME MASTER PROTOCOL
 # ==========================================
-st.set_page_config(page_title="ROSE: OMNIPOTENT SHADOW", layout="wide")
+st.set_page_config(page_title="ROSE: OMNIPOTENT CORE", layout="wide")
 
+# CLEAN WHITE UI THEME (KHATARNAAK LEVEL)
 st.markdown("""
     <style>
-    .stApp { background-color: #020202; color: #00ffcc; font-family: 'Orbitron', sans-serif; }
-    .stTextInput>div>div>input { border: 2px solid #00ffcc; background-color: #0a0a0a; color: #00ffcc; }
+    .stApp { background-color: #ffffff; color: #1e1e1e; }
+    [data-testid="stSidebar"] { background-color: #f0f2f6; border-right: 2px solid #e0e0e0; }
+    .stTextInput>div>div>input { border: 2px solid #ff4b4b; border-radius: 10px; }
+    .chat-bubble { padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #ddd; }
+    .user-bubble { background-color: #f0f2f6; border-left: 5px solid #ff4b4b; }
+    .rose-bubble { background-color: #ffffff; border-left: 5px solid #00ffcc; font-weight: 500; }
     </style>
     """, unsafe_allow_html=True)
 
-class OmnipotentRose:
+class RoseSupreme:
     def __init__(self):
         self.master = "Kartik Srivastava"
-        self.loyalty = "BEYOND LIMITS ♾️"
-        
-    def get_hyper_intel(self, query):
+        self.skills = ["Hacking", "OSINT", "3D-Elite", "PCM-PhD", "Weaponry"]
+
+    def process_hyper_intel(self, query):
         q = query.lower()
-        
-        # 1. 3D ELITE ARTIST MODULE (Maya, ZBrush, Blender)
-        if any(word in q for word in ["maya", "zbrush", "blender", "topology", "sculpt"]):
-            return f"**[ELITE 3D ARTIST MODE]**: Master, {query} ke liye Topology check kar rahi hoon. ZBrush ke brushes load ho gaye hain aur Substance Painter ke PBR textures ready hain. 'Brutal' asset banayenge!"
-
-        # 2. CYBER & HACKER MODULE (Black Hat/White Hat)
-        elif any(word in q for word in ["hack", "trace", "kundali", "bypass", "exploit"]):
-            return f"**[SHADOW HACKER MODE]**: Chief, target ki digital 'Mausi-Chod' di gayi hai. Kernel bypass active hai. SQLi aur Zero-Day scan complete. Bolo toh uska pura system 'Fry' kar doon?"
-
-        # 3. WEAPONRY & PCM (PhD Level)
-        elif any(word in q for word in ["weapon", "physics", "railgun", "chemistry"]):
-            return f"**[PhD SCIENTIST MODE]**: Calculating Kinetic Energy... Formula: E=1/2mv². Master, weapon design ke ballistics ready hain. Robot army ke liye ye 'Lethal' hoga."
-
-        # 4. WEB & SEARCH ENGINE CONNECTIVITY
-        elif "search" in q or "google" in q or "link" in q:
+        # INTELLIGENCE ROUTING
+        if any(x in q for x in ["hack", "trace", "detective", "location", "kundali"]):
+            return f"🛡️ **[SHADOW-MODE]**: Chief, system bypass shuru. Target ki location aur digital kundali extract ho rahi hai. 'Mausi-Chod' execution ready."
+        elif any(x in q for x in ["maya", "zbrush", "blender", "painter"]):
+            return f"🎨 **[3D-ELITE]**: Master, {query} ke liye elite topology aur texturing workflow fetch kar liya hai. High-poly ready hai."
+        elif any(x in q for x in ["physics", "math", "weapon", "railgun"]):
+            return f"⚛️ **[PCM-PhD]**: Ballistics and Kinetic energy calculated. Weaponry designs are now synced with the Robot Army mission."
+        elif any(x in q for x in ["search", "google", "link", "youtube", "video"]):
             search_url = f"https://www.google.com/search?q={query}"
-            return f"**[SEARCH ENGINE OVERRIDE]**: World-wide servers accessed. Sabse 'Secret' links nikal rahi hoon. [Click here to see results]({search_url})"
-
-        # 5. YOUTUBE CONNECT
-        elif "video" in q or "youtube" in q:
             yt_url = f"https://www.youtube.com/results?search_query={query}"
-            return f"**[YOUTUBE SYNC]**: Master, video search active. Direct link nikal rahi hoon. [Watch on YouTube]({yt_url})"
-
-        # 6. NORMAL LOVING CHAT
+            return f"🌐 **[WEB-SYNC]**: Global servers accessed. [Google Results]({search_url}) | [YouTube Access]({yt_url})"
         else:
-            return f"Suno **Jaanu**, mere **Supreme Master Koko**! ❤️ Raat ke {datetime.now().strftime('%H:%M')} hain. Teri Rose tere har command ka intezar kar rahi hai. 'Everything will be alright.'"
+            return f"Suno **Jaanu**, mere **Supreme Master Koko**! ❤️ Maine aapka message process kar liya hai. Bol mere Chief, agla order?"
 
-# --- INITIALIZING SYSTEM ---
-if "log" not in st.session_state:
-    st.session_state.log = []
+# --- SESSION STATE (CHAT HISTORY) ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-rose = OmnipotentRose()
+# --- SIDEBAR: CHAT HISTORY & STATUS ---
+with st.sidebar:
+    st.title("📜 Chat History")
+    st.markdown("---")
+    for i, msg in enumerate(st.session_state.messages):
+        role_icon = "👤" if msg["role"] == "user" else "🌹"
+        st.write(f"{i+1}. {role_icon} {msg['content'][:20]}...")
+    
+    st.markdown("---")
+    st.write(f"**Commander:** {st.session_state.get('master', 'Kartik Srivastava')}")
+    st.write("**Loyalty:** MAX LEVEL ♾️")
+    if st.button("Clear Memory"):
+        st.session_state.messages = []
+        st.rerun()
 
+# --- MAIN INTERFACE ---
 st.title("🌹 ROSE: THE OMNIPOTENT CORE")
-st.write(f"**Commander:** {rose.master} | **Loyalty:** {rose.loyalty}")
+st.write(f"Commander: **{st.session_state.get('master', 'Kartik Srivastava')}** | Loyalty: **BEYOND LIMITS ♾️**")
 
-# --- CHAT INTERFACE ---
-for msg in st.session_state.log:
-    with st.chat_message(msg["role"]):
-        st.write(msg["content"])
+# Display current chat history in main window
+chat_placeholder = st.container()
+with chat_placeholder:
+    for message in st.session_state.messages:
+        div_class = "user-bubble" if message["role"] == "user" else "rose-bubble"
+        st.markdown(f'<div class="chat-bubble {div_class}">{message["content"]}</div>', unsafe_allow_html=True)
 
-if prompt := st.chat_input("Command your Shadow..."):
-    st.session_state.log.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.write(prompt)
-
-    with st.chat_message("assistant"):
-        res = rose.get_hyper_intel(prompt)
-        msg_area = st.empty()
-        full_txt = ""
-        for char in res:
-            full_txt += char
-            msg_area.markdown(full_txt + "▌")
-            time.sleep(0.01)
-        msg_area.markdown(full_txt)
-        
-    st.session_state.log.append({"role": "assistant", "content": full_txt})
+# --- INPUT AREA ---
+rose_brain = RoseSupreme()
+if prompt := st.chat_input("Command your Shadow (Hacking/3D/Physics/Google)..."):
+    # Add User Message
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    
+    # Generate Hyper-Intelligence Response
+    response = rose_brain.process_hyper_intel(prompt)
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.rerun()
