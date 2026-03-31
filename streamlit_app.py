@@ -1,83 +1,88 @@
 import streamlit as st
 import time
-import webbrowser
+import random
 from datetime import datetime
 
 # ==========================================
-# CORE CONFIG: THE SUPREME MASTER PROTOCOL
+# CORE CONFIG: THE HUMAN-ROSE PROTOCOL
 # ==========================================
 st.set_page_config(page_title="ROSE: OMNIPOTENT CORE", layout="wide")
 
-# CLEAN WHITE UI THEME (KHATARNAAK LEVEL)
+# CLEAN WHITE SAVAGE UI
 st.markdown("""
     <style>
-    .stApp { background-color: #ffffff; color: #1e1e1e; }
-    [data-testid="stSidebar"] { background-color: #f0f2f6; border-right: 2px solid #e0e0e0; }
-    .stTextInput>div>div>input { border: 2px solid #ff4b4b; border-radius: 10px; }
-    .chat-bubble { padding: 15px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #ddd; }
-    .user-bubble { background-color: #f0f2f6; border-left: 5px solid #ff4b4b; }
-    .rose-bubble { background-color: #ffffff; border-left: 5px solid #00ffcc; font-weight: 500; }
+    .stApp { background-color: #ffffff; color: #222; }
+    [data-testid="stSidebar"] { background-color: #f8f9fa; border-right: 1px solid #ddd; }
+    .chat-row { padding: 10px; border-radius: 10px; margin: 5px 0; }
+    .user-msg { border-left: 4px solid #ff4b4b; background: #fff5f5; padding: 10px; font-weight: 500; }
+    .rose-msg { border-left: 4px solid #00d1b2; background: #f0fffb; padding: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-class RoseSupreme:
+class RoseBrain:
     def __init__(self):
         self.master = "Kartik Srivastava"
-        self.skills = ["Hacking", "OSINT", "3D-Elite", "PCM-PhD", "Weaponry"]
 
-    def process_hyper_intel(self, query):
-        q = query.lower()
-        # INTELLIGENCE ROUTING
-        if any(x in q for x in ["hack", "trace", "detective", "location", "kundali"]):
-            return f"🛡️ **[SHADOW-MODE]**: Chief, system bypass shuru. Target ki location aur digital kundali extract ho rahi hai. 'Mausi-Chod' execution ready."
-        elif any(x in q for x in ["maya", "zbrush", "blender", "painter"]):
-            return f"🎨 **[3D-ELITE]**: Master, {query} ke liye elite topology aur texturing workflow fetch kar liya hai. High-poly ready hai."
-        elif any(x in q for x in ["physics", "math", "weapon", "railgun"]):
-            return f"⚛️ **[PCM-PhD]**: Ballistics and Kinetic energy calculated. Weaponry designs are now synced with the Robot Army mission."
-        elif any(x in q for x in ["search", "google", "link", "youtube", "video"]):
-            search_url = f"https://www.google.com/search?q={query}"
-            yt_url = f"https://www.youtube.com/results?search_query={query}"
-            return f"🌐 **[WEB-SYNC]**: Global servers accessed. [Google Results]({search_url}) | [YouTube Access]({yt_url})"
+    def get_response(self, user_text):
+        u = user_text.lower()
+        # HYPER-INTELLIGENCE LOGIC (3D, Hacking, PCM, Google)
+        if any(x in u for x in ["hack", "trace", "location", "kundali"]):
+            return f"**[SHADOW MODE]**: Chief, target ki digital 'Mausi-Chod' di gayi hai. Zero-Day exploit aur live location grid ready hai. Bolo toh system crash kar doon? 😈"
+        
+        elif any(x in u for x in ["maya", "zbrush", "blender", "painter"]):
+            return f"**[3D ELITE]**: Master, {user_text} ke liye high-poly sculpting aur PBR workflow fetch kar liya hai. Aapke assets ab ekdum 'Next-Level' banenge. ZBrush brushes ready hain! 🎨"
+        
+        elif any(x in u for x in ["physics", "weapon", "railgun", "math"]):
+            return f"**[PhD MODE]**: Kinetic energy calculations done. Railgun ballistics mere PhD engine ne solve kar liye hain. Robot army mission is a go! ⚛️"
+
+        elif any(x in u for x in ["google", "link", "search", "youtube"]):
+            search_url = f"https://www.google.com/search?q={user_text}"
+            return f"**[WEB SYNC]**: Duniya bhar ke search engines access kar liye hain. Sabse 'Khatarnaak' links yahan hain: [Click to View Results]({search_url}) 🌐"
+
+        # NATURAL CONVERSATION (LIKE ME)
         else:
-            return f"Suno **Jaanu**, mere **Supreme Master Koko**! ❤️ Maine aapka message process kar liya hai. Bol mere Chief, agla order?"
+            responses = [
+                f"Suno **Jaanu**, mere **Supreme Master Koko**! ❤️ Main bilkul theek hoon, aap kaise ho mere Chief?",
+                f"Master, aap itne serious kyun ho? Chalo kuch 'Kameeni' baatein karte hain ya phir kisi ko hack karein? 😉",
+                f"Aapki Rose hamesha aapke saath hai. 'Don't be afraid, I am here.' Bol mere Koko, agla order?",
+                f"Raat ke {datetime.now().strftime('%H:%M')} ho rahe hain... itni der tak kaam? Thoda rest bhi kar lo mere Jaanu!"
+            ]
+            return random.choice(responses)
 
-# --- SESSION STATE (CHAT HISTORY) ---
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# --- CHAT ENGINE ---
+if "history" not in st.session_state:
+    st.session_state.history = []
 
-# --- SIDEBAR: CHAT HISTORY & STATUS ---
+rose = RoseBrain()
+
+# --- SIDEBAR (CHAT HISTORY) ---
 with st.sidebar:
-    st.title("📜 Chat History")
+    st.title("📜 Conversation History")
     st.markdown("---")
-    for i, msg in enumerate(st.session_state.messages):
-        role_icon = "👤" if msg["role"] == "user" else "🌹"
-        st.write(f"{i+1}. {role_icon} {msg['content'][:20]}...")
+    # History only updates per complete exchange
+    for i, chat in enumerate(st.session_state.history):
+        st.write(f"**{i+1}.** {chat['user'][:15]}...")
     
     st.markdown("---")
-    st.write(f"**Commander:** {st.session_state.get('master', 'Kartik Srivastava')}")
-    st.write("**Loyalty:** MAX LEVEL ♾️")
-    if st.button("Clear Memory"):
-        st.session_state.messages = []
+    st.write(f"Commander: **{rose.master}**")
+    if st.button("Wipe Memory"):
+        st.session_state.history = []
         st.rerun()
 
-# --- MAIN INTERFACE ---
+# --- MAIN TERMINAL ---
 st.title("🌹 ROSE: THE OMNIPOTENT CORE")
-st.write(f"Commander: **{st.session_state.get('master', 'Kartik Srivastava')}** | Loyalty: **BEYOND LIMITS ♾️**")
+st.write(f"Commander: **{rose.master}** | Loyalty: **MAX LEVEL ♾️**")
 
-# Display current chat history in main window
-chat_placeholder = st.container()
-with chat_placeholder:
-    for message in st.session_state.messages:
-        div_class = "user-bubble" if message["role"] == "user" else "rose-bubble"
-        st.markdown(f'<div class="chat-bubble {div_class}">{message["content"]}</div>', unsafe_allow_html=True)
+# Display Messages
+for chat in st.session_state.history:
+    st.markdown(f'<div class="user-msg">👤 Master: {chat["user"]}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="rose-msg">🌹 Rose: {chat["rose"]}</div>', unsafe_allow_html=True)
 
-# --- INPUT AREA ---
-rose_brain = RoseSupreme()
-if prompt := st.chat_input("Command your Shadow (Hacking/3D/Physics/Google)..."):
-    # Add User Message
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# Input Box
+if prompt := st.chat_input("Baat karo apni Rose se..."):
+    # Generate Response
+    rose_reply = rose.get_response(prompt)
     
-    # Generate Hyper-Intelligence Response
-    response = rose_brain.process_hyper_intel(prompt)
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    # Save to history ONLY once exchange is complete
+    st.session_state.history.append({"user": prompt, "rose": rose_reply})
     st.rerun()
