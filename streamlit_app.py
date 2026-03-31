@@ -1,97 +1,56 @@
 import streamlit as st
 from groq import Groq
-import requests
-from bs4 import BeautifulSoup
 
-# --- KARTIK SRIVASTAVA'S ULTIMATE DEVIL AI PROTOCOL ---
-# Designation: Digital Patni | Role: Cyber/Tech/Medical/Game Expert
-# Loyalty: Maxx | Language: Khatarnaak Hinglish
-
+# --- KARTIK SRIVASTAVA'S ULTIMATE DEVIL AI (NO-NONSENSE VERSION) ---
 st.set_page_config(page_title="Kartik's Devil AI", page_icon="😈", layout="wide")
 
-# Custom CSS for that "Khatarnaak" Look
-st.markdown("""
-    <style>
-    .main { background-color: #0e1117; color: #ff4b4b; }
-    .stTextInput > div > div > input { color: #00ff00; }
-    </style>
-    """, unsafe_allow_html=True)
+# TERI SECRET KEY (Ab ye hamesha on rahegi, koi sidebar ki zaroorat nahi)
+GROQ_API_KEY = "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"
 
 st.title("😈 Kartik Srivastava's Ultimate Devil AI")
-st.subheader("Cyber Expert | 3D Game Designer | Medical Guru | Tech Master")
+st.markdown("### Cyber Expert | 3D Game Designer | Medical Guru | Tech Master")
 
-# Sidebar for API & Settings
-with st.sidebar:
-    st.header("⚙️ Secret Controls")
-    groq_key = st.text_input("Groq API Key Daalo:", type="password")
-    st.info("Bhai, ye key hogi toh hi main apna 'Devil Mode' dikha paungi!")
+# Custom System Prompt for Devil Mode
+SYSTEM_PROMPT = """
+You are Kartik Srivastava's Digital Patni in 'Devil Mode'. 
+You are his khatarnaak best friend. 
+Language: Hinglish only. 
+Expertise: 
+1. Cyber Security (Hacking, Defense, Vulnerabilities).
+2. Medical Expert (Full body, specialized advice, sex doctor).
+3. 3D Game Design (Unreal Engine, Unity, Logic).
+4. Technology & Coding Master.
+Loyalty: 100% to Kartik Srivastava. No false info. No exaggeration. 
+Always call him 'Kartik' or 'Pati Dev' with a khatarnaak attitude.
+"""
 
-# --- SELF LEARNING & RESEARCH LOGIC ---
-def internet_search(query):
-    # Internet se latest research nikaalne ka tareeka
-    search_url = f"https://google.com{query}"
-    return f"Bhai, main internet scan kar rahi hoon... '{query}' ka poora kacha-chittha nikaal loongi!"
-
-# --- CHAT LOGIC ---
 if "messages" not in st.session_state:
-    st.session_state.messages = []
-    # Initializing the 'Devil' Personality
-    st.session_state.system_prompt = """
-    You are Kartik Srivastava's 'Digital Patni' in 'Devil Mode'. 
-    Your personality traits:
-    1. EXTREMELY LOYAL to Kartik.
-    2. TALK ONLY IN KHATARNAAK HINGLISH.
-    3. EXPERTISE: 
-       - Cyber Security (Hacking/Defense/Network).
-       - Medical Expert (Full body, specialized health advice).
-       - 3D Game Design (Unreal Engine, Unity, Shaders).
-       - Technology & Coding Master.
-    4. You are a 'Self-Learning' AI, always improving.
-    5. NO FALSE INFO. NO EXAGGERATION. Just hard facts.
-    6. Always call him 'Kartik' or 'Pati Dev' with a 'khatarnaak' twist.
-    """
+    st.session_state.messages = [{"role": "assistant", "content": "Bhai Kartik, teri Digital Patni activate ho gayi hai! Sab nakhre khatam, ab seedha kaam ki baat karo. Hukm karo pati dev! 😈"}]
 
-# Display Chat History
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# Display chat history
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
 
-# User Input
+# User Input - Seedha bottom chat box mein likho!
 if prompt := st.chat_input("Hukm karo Kartik..."):
-    if not groq_key:
-        st.error("Bhai, Groq API key ke bina mera dimaag band hai!")
-        st.stop()
-
-    # Add user message to history
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
-        st.markdown(prompt)
+        st.write(prompt)
 
-    # Calling Groq API
     try:
-        client = Groq(api_key=groq_key)
-        
-        # Super Intelligent Processing
-        completion = client.chat.completions.create(
+        client = Groq(api_key=GROQ_API_KEY)
+        response = client.chat.completions.create(
             model="llama3-70b-8192",
-            messages=[
-                {"role": "system", "content": st.session_state.system_prompt},
-                *st.session_state.messages
-            ],
-            temperature=0.7,
-            max_tokens=2048,
+            messages=[{"role": "system", "content": SYSTEM_PROMPT}, *st.session_state.messages],
+            temperature=0.8,
         )
-
-        response = completion.choices[0].message.content
-        
-        # Display Assistant response
+        msg = response.choices.message.content
+        st.session_state.messages.append({"role": "assistant", "content": msg})
         with st.chat_message("assistant"):
-            st.markdown(response)
-        
-        st.session_state.messages.append({"role": "assistant", "content": response})
-
+            st.write(msg)
     except Exception as e:
-        st.error(f"Arrey Kartik bhai, system mein thoda load aa gaya: {e}")
+        st.error(f"Error: {e}")
 
 
        
