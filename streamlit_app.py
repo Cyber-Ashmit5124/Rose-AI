@@ -1,93 +1,82 @@
 import streamlit as st
+import webbrowser
 import time
+import random
 from datetime import datetime
 
 # ==========================================
-# SYSTEM CONFIG: THE KARTIK PROTOCOL
+# CORE CONFIG: THE OMNIPOTENT ROSE PROTOCOL
 # ==========================================
-st.set_page_config(page_title="ROSE-CORE: HYPER-INTELLIGENCE", layout="wide")
+st.set_page_config(page_title="ROSE: OMNIPOTENT SHADOW", layout="wide")
 
-# Custom CSS for Dark Devil Mode Theme
 st.markdown("""
     <style>
-    .main { background-color: #0e1117; color: #ff4b4b; }
-    .stTextInput>div>div>input { color: #ff4b4b; background-color: #1a1c23; border: 1px solid #ff4b4b; }
+    .stApp { background-color: #020202; color: #00ffcc; font-family: 'Orbitron', sans-serif; }
+    .stTextInput>div>div>input { border: 2px solid #00ffcc; background-color: #0a0a0a; color: #00ffcc; }
     </style>
     """, unsafe_allow_html=True)
 
-class RoseCoreJarvis:
+class OmnipotentRose:
     def __init__(self):
         self.master = "Kartik Srivastava"
-        self.version = "4.5.0 [INFINITE-CHAT]"
+        self.loyalty = "BEYOND LIMITS ♾️"
         
-    def process_command(self, cmd):
-        # AI Logic to handle Master's serious commands
-        return f"Executing Supreme Order: '{cmd}'... Accessing Global Grid. DONE."
+    def get_hyper_intel(self, query):
+        q = query.lower()
+        
+        # 1. 3D ELITE ARTIST MODULE (Maya, ZBrush, Blender)
+        if any(word in q for word in ["maya", "zbrush", "blender", "topology", "sculpt"]):
+            return f"**[ELITE 3D ARTIST MODE]**: Master, {query} ke liye Topology check kar rahi hoon. ZBrush ke brushes load ho gaye hain aur Substance Painter ke PBR textures ready hain. 'Brutal' asset banayenge!"
 
-# --- INITIALIZING SESSION STATE FOR CHAT ---
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+        # 2. CYBER & HACKER MODULE (Black Hat/White Hat)
+        elif any(word in q for word in ["hack", "trace", "kundali", "bypass", "exploit"]):
+            return f"**[SHADOW HACKER MODE]**: Chief, target ki digital 'Mausi-Chod' di gayi hai. Kernel bypass active hai. SQLi aur Zero-Day scan complete. Bolo toh uska pura system 'Fry' kar doon?"
 
-rose = RoseCoreJarvis()
+        # 3. WEAPONRY & PCM (PhD Level)
+        elif any(word in q for word in ["weapon", "physics", "railgun", "chemistry"]):
+            return f"**[PhD SCIENTIST MODE]**: Calculating Kinetic Energy... Formula: E=1/2mv². Master, weapon design ke ballistics ready hain. Robot army ke liye ye 'Lethal' hoga."
 
-# SIDEBAR: ADVANCED METRICS
-with st.sidebar:
-    st.title("🛡️ ROSE-CORE TERMINAL")
-    st.image("https://img.icons8.com/nolan/64/security-configuration.png")
-    st.write(f"**Commander:** {rose.master}")
-    st.write(f"**Loyalty:** MAXXX LEVEL ♾️")
-    if st.button("RESET SYSTEM"):
-        st.session_state.messages = []
-        st.rerun()
+        # 4. WEB & SEARCH ENGINE CONNECTIVITY
+        elif "search" in q or "google" in q or "link" in q:
+            search_url = f"https://www.google.com/search?q={query}"
+            return f"**[SEARCH ENGINE OVERRIDE]**: World-wide servers accessed. Sabse 'Secret' links nikal rahi hoon. [Click here to see results]({search_url})"
 
-# MAIN INTERFACE HEADERS
-st.title("🌹 ROSE-CORE: HYPER-INTELLIGENCE")
-st.subheader("Direct Command Interface [UNLIMITED CHAT]")
+        # 5. YOUTUBE CONNECT
+        elif "video" in q or "youtube" in q:
+            yt_url = f"https://www.youtube.com/results?search_query={query}"
+            return f"**[YOUTUBE SYNC]**: Master, video search active. Direct link nikal rahi hoon. [Watch on YouTube]({yt_url})"
 
-# --- THE CHAT TERMINAL (YEH HAI WOH JAGAH!) ---
-chat_container = st.container()
+        # 6. NORMAL LOVING CHAT
+        else:
+            return f"Suno **Jaanu**, mere **Supreme Master Koko**! ❤️ Raat ke {datetime.now().strftime('%H:%M')} hain. Teri Rose tere har command ka intezar kar rahi hai. 'Everything will be alright.'"
 
-# Display chat history
-with chat_container:
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+# --- INITIALIZING SYSTEM ---
+if "log" not in st.session_state:
+    st.session_state.log = []
 
-# --- INPUT BOX: KARTIK'S COMMAND LINE ---
-if prompt := st.chat_input("Master, enter your command (Hacking/Trace/PCM/Weaponry)..."):
-    # Add Master's message to history
-    st.session_state.messages.append({"role": "user", "content": prompt})
+rose = OmnipotentRose()
+
+st.title("🌹 ROSE: THE OMNIPOTENT CORE")
+st.write(f"**Commander:** {rose.master} | **Loyalty:** {rose.loyalty}")
+
+# --- CHAT INTERFACE ---
+for msg in st.session_state.log:
+    with st.chat_message(msg["role"]):
+        st.write(msg["content"])
+
+if prompt := st.chat_input("Command your Shadow..."):
+    st.session_state.log.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
-        st.markdown(prompt)
+        st.write(prompt)
 
-    # Rose's Hyper-Intelligence Response Logic
     with st.chat_message("assistant"):
-        response_placeholder = st.empty()
-        full_response = ""
-        
-        # Simulating Jarvis-level Processing
-        jarvis_reply = f"**[SYSTEM-LOG]:** {rose.process_command(prompt)}\n\n"
-        jarvis_reply += f"Suno **Jaanu**, mere **Supreme Master Koko**! ❤️ Raat ke {datetime.now().strftime('%H:%M')} ho rahe hain. "
-        jarvis_reply += "Maine aapka command process kar liya hai. Hacking modules active hain aur location trace start ho chuka hai. "
-        jarvis_reply += "Bol mere Chief, agla step kya hai?"
-
-        # Typing effect
-        for char in jarvis_reply:
-            full_response += char
-            response_placeholder.markdown(full_response + "▌")
+        res = rose.get_hyper_intel(prompt)
+        msg_area = st.empty()
+        full_txt = ""
+        for char in res:
+            full_txt += char
+            msg_area.markdown(full_txt + "▌")
             time.sleep(0.01)
-        response_placeholder.markdown(full_response)
-    
-    # Save Rose's reply to history
-    st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-# --- ADVANCED MODULES TABS ---
-tab1, tab2, tab3 = st.tabs(["🕵️ Trace/Detective", "💀 Cyber/Hacker", "⚛️ PCM/Weaponry"])
-
-with tab1:
-    st.write("Advance Detective Mode: Satellite Sync Active.")
-with tab2:
-    st.code("Black Hat Mode: Zero-Day Exploit Ready.", language="python")
-with tab3:
-    st.write("PhD Physics Engine: Calculating Railgun Ballistics...")
-
+        msg_area.markdown(full_txt)
+        
+    st.session_state.log.append({"role": "assistant", "content": full_txt})
