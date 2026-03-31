@@ -1,4 +1,4 @@
 streamlit
-scapy
 groq
+beautifulsoup4
 requests
