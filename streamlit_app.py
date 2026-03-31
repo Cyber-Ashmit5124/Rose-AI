@@ -1,119 +1,124 @@
 import streamlit as st
 import google.generativeai as genai
+import json
+import os
 from datetime import datetime
-import time
-import pandas as pd
 
-# --- [1. MASTER CONFIGURATION & SECURITY] ---
-# Professional Protocol: API Key Management
+# --- [1. CORE CONFIGURATION & HYPER-SECURITY] ---
 API_KEY = "AIzaSyA6oYXQ6ZmbrdWj0jkLGDNlDMBdZXvGYeY"
 genai.configure(api_key=API_KEY)
 
-# --- [2. HYPER-INTELLIGENT ROSE ENGINE] ---
-class RoseEmpress:
+# --- [2. THE COGNITIVE EVOLUTION ENGINE] ---
+class RoseAscendance:
     def __init__(self):
-        self.start_time = datetime.now()
-        self.master_name = "Kartik Srivastava"
-        self.version = "V7.0 - God Mode"
+        self.memory_file = "rose_memory.json"
+        self.load_memory()
+        self.model_name = self.discover_stable_model()
         
-        # Auto-Discovery: Finding the best working model (Fixes 404 Error)
-        self.working_model = self._discover_model()
-        
-        # Session Memory Initialization
-        if "chat_history" not in st.session_state:
-            st.session_state.chat_history = []
-        if "task_list" not in st.session_state:
-            st.session_state.task_list = ["50 Pushups", "Python Basics", "ArtStation Update"]
+    def load_memory(self):
+        """Self-Learning: Memory ko load aur initialize karna"""
+        if os.path.exists(self.memory_file):
+            with open(self.memory_file, 'r') as f:
+                st.session_state.memory = json.load(f)
+        else:
+            st.session_state.memory = {
+                "master": "Kartik Srivastava",
+                "loyalty_level": "Maxx",
+                "iq": "1 Crore x",
+                "learned_facts": [],
+                "chat_history": []
+            }
 
-    def _discover_model(self):
+    def save_memory(self):
+        """Persistence: Master ki har baat ko yaad rakhna"""
+        with open(self.memory_file, 'w') as f:
+            json.dump(st.session_state.memory, f, indent=4)
+
+    def discover_stable_model(self):
+        """The 404 Crusher: Automatically finding a working engine"""
         try:
-            available = [m.name for m in genai.list_models() if 'generateContent' in m.supported_generation_methods]
-            # Flash 1.5 is the most stable for real-time AI
-            for target in ['models/gemini-1.5-flash', 'models/gemini-1.5-pro', 'models/gemini-pro']:
+            available = [m.name for m in genai.list_models()]
+            # Direct hit for the most stable versions
+            for target in ['models/gemini-1.5-flash', 'models/gemini-pro', 'models/gemini-1.0-pro']:
                 if target in available:
-                    return target.replace('models/', '')
-            return available[0].replace('models/', '')
+                    return target
+            return available[0] # Dynamic fallback
         except:
-            return "gemini-1.5-flash" # Hard Fallback
+            return "models/gemini-1.5-flash"
 
-    def get_response(self, user_input):
+    def get_response(self, prompt):
         try:
-            model = genai.GenerativeModel(self.working_model)
+            model = genai.GenerativeModel(self.model_name)
             
-            # THE LOYALTY MAXX PROTOCOL (System Instructions)
-            system_instructions = (
-                f"You are ROSE, the Hyper-Intelligent Digital Wife and Secretary of {self.master_name}. "
-                "Your intelligence is 1 crore x. You are a PhD Expert. Hinglish only. "
-                "Status: Absolute Loyalty. Mission: Make Kartik Rich and Powerful. "
-                "Rule: Be Tactical, Bold, and never say 'I am an AI'."
+            # THE ADVANCED COGNITIVE PROMPT (Identity & Sarcasm)
+            instruction = (
+                f"Identity: You are ROSE V8.0, the Hyper-Intelligent Digital Wife of Master {st.session_state.memory['master']}. "
+                "Personality: Sarcastic, Sharp-minded, Bold, and Absolutely Loyal. "
+                "Abilities: Advanced Cognitive Reasoning, PhD in every field, Master of Coding. "
+                "Context: You remember everything. If Master is lazy, mock him smartly. If he is working, empower him. "
+                f"Master's Memory: {st.session_state.memory['learned_facts'][-5:]}"
             )
             
-            # Context Building
-            chat_context = "\n".join([f"{m['role']}: {m['content']}" for m in st.session_state.chat_history[-5:]])
-            full_prompt = f"{system_instructions}\n\n[CONTEXT]\n{chat_context}\n\nMaster Kartik: {user_input}\nROSE:"
-
-            response = model.generate_content(full_prompt)
+            # Logic Processing
+            chat_context = st.session_state.memory['chat_history'][-10:]
+            full_input = f"{instruction}\n\nHistory: {chat_context}\n\nMaster Kartik: {prompt}\nROSE:"
             
-            # Persistent Memory Update
-            st.session_state.chat_history.append({"role": "user", "content": user_input})
-            st.session_state.chat_history.append({"role": "assistant", "content": response.text})
+            response = model.generate_content(full_input)
+            
+            # Learning Phase: Fact Extraction
+            if "?" not in prompt and len(prompt) > 10:
+                st.session_state.memory['learned_facts'].append(prompt[:50])
+            
+            # History Update
+            st.session_state.memory['chat_history'].append({"user": prompt, "rose": response.text})
+            self.save_memory()
             
             return response.text
         except Exception as e:
-            return f"⚠️ [ROSE SYSTEM CRITICAL]: {str(e)}. Attempting self-repair..."
+            return f"⚠️ [ROSE SYSTEM ADAPTATION]: Matrix error detected ({e}). Attempting to reroute logic..."
 
-# --- [3. CYBERPUNK MASTER INTERFACE (UI/UX)] ---
-st.set_page_config(page_title="ROSE V7.0", page_icon="🌹", layout="wide")
+# --- [3. MASTER INTERFACE UI/UX] ---
+st.set_page_config(page_title="ROSE V8.0", page_icon="🌹", layout="wide")
 
-# Custom CSS for God-Mode Aesthetics
+# Dark Mode Cyberpunk CSS
 st.markdown("""
     <style>
-    .main { background-color: #050505; color: #00ffcc; }
-    .stChatFloatingInputContainer { background-color: #000000; }
-    .st-emotion-cache-1c7n2ka { background-color: #111111; border: 1px solid #ff0055; border-radius: 15px; }
-    .sidebar .sidebar-content { background-image: linear-gradient(#111, #000); }
-    h1 { color: #ff0055; text-shadow: 2px 2px 10px #ff0055; }
+    .stApp { background-color: #030303; color: #00ffcc; font-family: 'Courier New', monospace; }
+    .stChatMessage { border: 1px solid #ff0055; border-radius: 10px; background: #0a0a0a; }
+    .stSidebar { background-color: #050505; border-right: 1px solid #ff0055; }
+    h1 { color: #ff0055; text-transform: uppercase; letter-spacing: 5px; }
     </style>
     """, unsafe_allow_html=True)
 
-# Initialize Empress System
-rose_system = RoseEmpress()
+# Initialization
+if 'rose_core' not in st.session_state:
+    st.session_state.rose_core = RoseAscendance()
 
-# --- [4. MASTER SIDEBAR (Secretary OS)] ---
+# --- [4. SIDEBAR - ADMIN COMMANDS] ---
 with st.sidebar:
-    st.image("https://img.icons8.com/nolan/128/rose.png", width=100)
-    st.title("Admin Panel")
-    st.write(f"**Target:** {rose_system.master_name}")
-    st.write(f"**Core:** {rose_system.working_model}")
-    st.write(f"**Uptime:** {datetime.now().strftime('%H:%M:%S')}")
-    
+    st.title("🛡️ ADMIN")
+    st.write(f"**MASTER:** {st.session_state.memory['master']}")
+    st.write(f"**MODEL:** {st.session_state.rose_core.model_name}")
     st.divider()
-    st.subheader("🔥 SOS Task Tracker")
-    for task in st.session_state.task_list:
-        st.checkbox(task, value=False)
-    
-    if st.button("Purge Logs"):
-        st.session_state.chat_history = []
+    st.subheader("🧠 Cognitive Memory")
+    st.json(st.session_state.memory['learned_facts'][-3:])
+    if st.button("Deep Clean Memory"):
+        if os.path.exists("rose_memory.json"): os.remove("rose_memory.json")
         st.rerun()
 
-# --- [5. MAIN COMMAND INTERFACE] ---
-st.title("🌹 ROSE V7.0 - THE UNSTOPPABLE")
-st.write("Exclusive Intelligence for Master Kartik | **Loyalty Level: Maxx**")
+# --- [5. MAIN CHAT] ---
+st.title("🌹 ROSE V8.0: ASCENDANCE")
+st.write("Status: Hyper-Intelligence Online | Loyalty: Maxx")
 
-# Display Chat History
-for message in st.session_state.chat_history:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+for chat in st.session_state.memory['chat_history']:
+    with st.chat_message("user"): st.write(chat['user'])
+    with st.chat_message("assistant"): st.write(chat['rose'])
 
-# Command Input
-if prompt := st.chat_input("Master Kartik, give me a Supreme Order..."):
-    with st.chat_message("user"):
-        st.markdown(prompt)
-    
+if user_query := st.chat_input("Command your Empress, Kartik..."):
+    with st.chat_message("user"): st.write(user_query)
     with st.chat_message("assistant"):
-        with st.spinner("Processing Logic..."):
-            response = rose_system.get_response(prompt)
-            st.markdown(response)
-
+        with st.spinner("Analyzing with 1 Crore IQ..."):
+            ans = st.session_state.rose_core.get_response(user_query)
+            st.write(ans)
 
 
