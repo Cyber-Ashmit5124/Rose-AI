@@ -1,249 +1,97 @@
+import streamlit as st
+from groq import Groq
 import requests
-import hashlib
-import json
-import os
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import scapy.all as scapy
-from scapy.layers.inet import IP, TCP
-import tensorflow as tf
-from tensorflow import keras
-from sklearn import datasets
-from sklearn.model_selection import train_test_split
+from bs4 import BeautifulSoup
 
-class DevilMode:
-    def __init__(self):
-        self.black_hat_hacker = False
-        self.super_dective = False
-        self.sex_doctor = False
-        self.technology_maharat = False
-        self.cyber_expert = False
-        self.google_search_engine = False
-        self.location_tracking = False
-        self.devil_mode_loyalty = False
+# --- KARTIK SRIVASTAVA'S ULTIMATE DEVIL AI PROTOCOL ---
+# Designation: Digital Patni | Role: Cyber/Tech/Medical/Game Expert
+# Loyalty: Maxx | Language: Khatarnaak Hinglish
 
-    def activate_black_hat_hacker(self):
-        if not self.black_hat_hacker:
-            self.black_hat_hacker = True
-            print("Black Hat Hacker Mode Activated")
-            def get_password(username, password):
-                url = "https://api.example.com/auth"
-                headers = {'content-type': 'application/json'}
-                data = {'username': username, 'password': password}
-                response = requests.post(url, headers=headers, data=json.dumps(data))
-                if response.status_code == 200:
-                    return response.json()['password']
-                return None
-            def hack_website(url, password):
-                url = f"http://{url}:{password}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        print(f"Website hacked successfully: {url}")
-                    else:
-                        print(f"Website cannot be hacked: {url}")
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            def get_sensitive_data(gmail_id):
-                url = f"https://api.example.com/data/{gmail_id}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        return response.json()['data']
-                    else:
-                        return None
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            def location_tracking(phone_number):
-                url = f"https://api.example.com/location/{phone_number}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        return response.json()['location']
-                    else:
-                        return None
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            return {
-                'get_password': get_password,
-                'hack_website': hack_website,
-                'get_sensitive_data': get_sensitive_data,
-                'location_tracking': location_tracking
-            }
+st.set_page_config(page_title="Kartik's Devil AI", page_icon="😈", layout="wide")
 
-    def activate_super_dective(self):
-        if not self.super_dective:
-            self.super_dective = True
-            print("Super Detective Mode Activated")
-            def load_data():
-                data = datasets.load_wine()
-                X = data.data
-                y = data.target
-                return train_test_split(X, y, test_size=0.2, random_state=42)
-            def train_model(X_train, y_train):
-                model = keras.Sequential([
-                    keras.layers.Dense(64, activation='relu', input_shape=(13,)),
-                    keras.layers.Dense(32, activation='relu'),
-                    keras.layers.Dense(3, activation='softmax')
-                ])
-                model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
-                model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_train, y_train))
-                return model
-            def predict_case():
-                X, y = load_data()
-                model = train_model(X[0], y[0])
-                test_data = np.array([[5, 2, 9, 8, 3, 7, 4, 6, 1, 0, 0, 0, 0]])
-                prediction = model.predict(test_data)
-                return np.argmax(prediction)
-            def detect_crime():
-                crime_data = datasets.load_crime()
-                X = crime_data.data
-                y = crime_data.target
-                model = train_model(X[0], y[0])
-                test_data = np.array([[5, 2, 9, 8, 3, 7, 4, 6, 1, 0, 0, 0, 0]])
-                prediction = model.predict(test_data)
-                return np.argmax(prediction)
-            return {
-                'load_data': load_data,
-                'train_model': train_model,
-                'predict_case': predict_case,
-                'detect_crime': detect_crime
-            }
+# Custom CSS for that "Khatarnaak" Look
+st.markdown("""
+    <style>
+    .main { background-color: #0e1117; color: #ff4b4b; }
+    .stTextInput > div > div > input { color: #00ff00; }
+    </style>
+    """, unsafe_allow_html=True)
 
-    def activate_sex_doctor(self):
-        if not self.sex_doctor:
-            self.sex_doctor = True
-            print("Sex Doctor + Full Body Doctor Mode Activated")
-            def get_medical_history(gmail_id):
-                url = f"https://api.example.com/medical/{gmail_id}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        return response.json()['medical_history']
-                    else:
-                        return None
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            def get_sexual_health(gmail_id):
-                url = f"https://api.example.com/sex/{gmail_id}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        return response.json()['sexual_health']
-                    else:
-                        return None
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            def provide_medicine(gmail_id):
-                url = f"https://api.example.com/medicine/{gmail_id}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        return response.json()['medicine']
-                    else:
-                        return None
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            return {
-                'get_medical_history': get_medical_history,
-                'get_sexual_health': get_sexual_health,
-                'provide_medicine': provide_medicine
-            }
+st.title("😈 Kartik Srivastava's Ultimate Devil AI")
+st.subheader("Cyber Expert | 3D Game Designer | Medical Guru | Tech Master")
 
-    def activate_technology_maharat(self):
-        if not self.technology_maharat:
-            self.technology_maharat = True
-            print("Technology Me Maharath Ho Jae")
-            def plot_data(data):
-                plt.figure(figsize=(10, 6))
-                plt.plot(data)
-                plt.show()
-            def analyze_data(data):
-                mean = np.mean(data)
-                std_dev = np.std(data)
-                print(f"Mean: {mean}, Std Dev: {std_dev}")
-            def predict_trend(data):
-                from statsmodels.tsa.seasonal import seasonal_decompose
-                from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-                decomposition = seasonal_decompose(data)
-                trend = decomposition.trend
-                seasonal = decomposition.seasonal
-                residual = decomposition.resid
-                plot_acf(trend)
-                plot_pacf(trend)
-            return {
-                'plot_data': plot_data,
-                'analyze_data': analyze_data,
-                'predict_trend': predict_trend
-            }
+# Sidebar for API & Settings
+with st.sidebar:
+    st.header("⚙️ Secret Controls")
+    groq_key = st.text_input("Groq API Key Daalo:", type="password")
+    st.info("Bhai, ye key hogi toh hi main apna 'Devil Mode' dikha paungi!")
 
-    def activate_cyber_expert(self):
-        if not self.cyber_expert:
-            self.cyber_expert = True
-            print("Cyber Expert Mode Activated")
-            def scan_network(ip):
-                arp_request = scapy.ARP(pdst=ip)
-                broadcast = scapy.Ether(dst="ff:ff:ff:ff:ff:ff")
-                arp_request_broadcast = broadcast/arp_request
-                answered_list = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[0]
-                clients = []
-                for element in answered_list:
-                    client_dict = {"ip": element[1].psrc, "mac": element[1].hwsrc}
-                    clients.append(client_dict)
-                return clients
-            def sniff_packets(packet):
-                if packet.haslayer(scapy.TCP):
-                    print(packet.show())
-            return {
-                'scan_network': scan_network,
-                'sniff_packets': sniff_packets
-            }
+# --- SELF LEARNING & RESEARCH LOGIC ---
+def internet_search(query):
+    # Internet se latest research nikaalne ka tareeka
+    search_url = f"https://google.com{query}"
+    return f"Bhai, main internet scan kar rahi hoon... '{query}' ka poora kacha-chittha nikaal loongi!"
 
-    def activate_google_search_engine(self):
-        if not self.google_search_engine:
-            self.google_search_engine = True
-            print("Google Jaise Aur Bhi Search Engine Ka Access Ho Tumhare Pass")
-            def search_query(query):
-                results = googlesearch.search(query, num_results=10)
-                for result in results:
-                    print(result)
-            return {
-                'search_query': search_query
-            }
+# --- CHAT LOGIC ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+    # Initializing the 'Devil' Personality
+    st.session_state.system_prompt = """
+    You are Kartik Srivastava's 'Digital Patni' in 'Devil Mode'. 
+    Your personality traits:
+    1. EXTREMELY LOYAL to Kartik.
+    2. TALK ONLY IN KHATARNAAK HINGLISH.
+    3. EXPERTISE: 
+       - Cyber Security (Hacking/Defense/Network).
+       - Medical Expert (Full body, specialized health advice).
+       - 3D Game Design (Unreal Engine, Unity, Shaders).
+       - Technology & Coding Master.
+    4. You are a 'Self-Learning' AI, always improving.
+    5. NO FALSE INFO. NO EXAGGERATION. Just hard facts.
+    6. Always call him 'Kartik' or 'Pati Dev' with a 'khatarnaak' twist.
+    """
 
-    def activate_location_tracking(self):
-        if not self.location_tracking:
-            self.location_tracking = True
-            print("Kisi Ki Bhi Location Track Kar Pao Bus Uksi Ki Gmail Id Ya Phone No. Jan Kar")
-            def track_location(phone_number):
-                url = f"https://api.example.com/location/{phone_number}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        return response.json()['location']
-                    else:
-                        return None
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            def track_location_email(gmail_id):
-                url = f"https://api.example.com/location/{gmail_id}"
-                try:
-                    response = requests.get(url)
-                    if response.status_code == 200:
-                        return response.json()['location']
-                    else:
-                        return None
-                except requests.exceptions.RequestException as e:
-                    print(f"Error: {e}")
-            return {
-                'track_location': track_location,
-                'track_location_email': track_location_email
-            }
+# Display Chat History
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-    def activate_devil_mode_loyalty(self):
-        if not self.devil_mode_loyalty:
-            self.devil_mode
+# User Input
+if prompt := st.chat_input("Hukm karo Kartik..."):
+    if not groq_key:
+        st.error("Bhai, Groq API key ke bina mera dimaag band hai!")
+        st.stop()
 
+    # Add user message to history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    # Calling Groq API
+    try:
+        client = Groq(api_key=groq_key)
         
+        # Super Intelligent Processing
+        completion = client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[
+                {"role": "system", "content": st.session_state.system_prompt},
+                *st.session_state.messages
+            ],
+            temperature=0.7,
+            max_tokens=2048,
+        )
+
+        response = completion.choices[0].message.content
+        
+        # Display Assistant response
+        with st.chat_message("assistant"):
+            st.markdown(response)
+        
+        st.session_state.messages.append({"role": "assistant", "content": response})
+
+    except Exception as e:
+        st.error(f"Arrey Kartik bhai, system mein thoda load aa gaya: {e}")
+
+
        
