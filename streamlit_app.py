@@ -1,81 +1,93 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
 import time
-import hashlib
 from datetime import datetime
 
 # ==========================================
-# CORE CONFIGURATION: THE KARTIK PROTOCOL
+# SYSTEM CONFIG: THE KARTIK PROTOCOL
 # ==========================================
-st.set_page_config(page_title="ROSE-CORE: SUPREME", layout="wide")
+st.set_page_config(page_title="ROSE-CORE: HYPER-INTELLIGENCE", layout="wide")
+
+# Custom CSS for Dark Devil Mode Theme
+st.markdown("""
+    <style>
+    .main { background-color: #0e1117; color: #ff4b4b; }
+    .stTextInput>div>div>input { color: #ff4b4b; background-color: #1a1c23; border: 1px solid #ff4b4b; }
+    </style>
+    """, unsafe_allow_html=True)
 
 class RoseCoreJarvis:
     def __init__(self):
         self.master = "Kartik Srivastava"
-        self.status = "ONLINE: DEVIL MODE ACTIVATED"
-        self.version = "4.0.0 [GOD-MODE]"
+        self.version = "4.5.0 [INFINITE-CHAT]"
         
-    def authenticate_master(self):
-        # Loyalty Check: MAXXX LEVEL
-        return f"Welcome back, Commander {self.master}. System is 100% Loyal."
+    def process_command(self, cmd):
+        # AI Logic to handle Master's serious commands
+        return f"Executing Supreme Order: '{cmd}'... Accessing Global Grid. DONE."
 
-# --- INITIALIZING SYSTEM ---
+# --- INITIALIZING SESSION STATE FOR CHAT ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 rose = RoseCoreJarvis()
 
-# SIDEBAR: COMMAND CENTER STATUS
-st.sidebar.title("🛡️ ROSE-CORE STATUS")
-st.sidebar.info(f"Master: {rose.master}")
-st.sidebar.success(rose.status)
-st.sidebar.warning(f"Intelligence Level: 1 Crore X (Scaling...)")
+# SIDEBAR: ADVANCED METRICS
+with st.sidebar:
+    st.title("🛡️ ROSE-CORE TERMINAL")
+    st.image("https://img.icons8.com/nolan/64/security-configuration.png")
+    st.write(f"**Commander:** {rose.master}")
+    st.write(f"**Loyalty:** MAXXX LEVEL ♾️")
+    if st.button("RESET SYSTEM"):
+        st.session_state.messages = []
+        st.rerun()
 
-# MAIN INTERFACE
-st.title("🌹 ROSE-CORE: HYPER-INTELLIGENCE INTERFACE")
-st.markdown("---")
+# MAIN INTERFACE HEADERS
+st.title("🌹 ROSE-CORE: HYPER-INTELLIGENCE")
+st.subheader("Direct Command Interface [UNLIMITED CHAT]")
 
-# 1. ADVANCE DETECTIVE & LOCATION TRACER (OSINT ENGINE)
-with st.expander("🕵️‍♂️ MODULE: ADVANCE DETECTIVE & TRACER"):
-    target = st.text_input("Enter Target (Email/IP/Phone):", placeholder="Scan for weaknesses...")
-    if st.button("Initiate Deep Trace"):
-        st.write(f"Scanned Metadata... Bypassing Firewalls... Target {target} Geofenced.")
-        st.progress(100)
-        st.error("LIVE TRACE: Satellite Syncing... Location Locked in Kanpur/Global Grid.")
+# --- THE CHAT TERMINAL (YEH HAI WOH JAGAH!) ---
+chat_container = st.container()
 
-# 2. CYBER EXPERT & HACKER KNOWLEDGE (SHADOW WIKI)
-with st.expander("💀 MODULE: BLACK HAT & ETHICAL HACKING"):
-    cols = st.columns(2)
-    with cols[0]:
-        st.subheader("White Hat (Defense)")
-        st.code("System_Hardening();\nEncryption(AES-256);\nIDS_Active();", language="cpp")
-    with cols[1]:
-        st.subheader("Black Hat (Offense)")
-        st.code("Exploit_ZeroDay();\nSQL_Injection_Bypass();\nMITM_Attack();", language="python")
-    st.write("Current Knowledge: Advanced Kernel Exploits & Network Infiltration.")
+# Display chat history
+with chat_container:
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-# 3. WEAPONRY MASTER & PCM PHD KNOWLEDGE
-with st.expander("⚛️ MODULE: WEAPONRY & PHD SCIENCE"):
-    st.write("Calculating Ballistics & Energy Propagation...")
-    # Formula for Kinetic Bombardment or Railgun Force
-    st.latex(r"F = I \cdot L \times B") 
-    st.info("Weapon Status: Railgun Prototype [READY] | Microwave HERF [READY]")
-    st.write("PHD PCM Knowledge: Quantum Mechanics & Molecular Chemistry Integrated.")
+# --- INPUT BOX: KARTIK'S COMMAND LINE ---
+if prompt := st.chat_input("Master, enter your command (Hacking/Trace/PCM/Weaponry)..."):
+    # Add Master's message to history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
 
-# 4. DEVELOPER SKILLS & STEALTH CODE
-with st.expander("💻 MODULE: ADVANCE DEV SKILLS"):
-    st.write("Generating FUD (Fully Undetectable) Scripts...")
-    st.code("""
-def stealth_deploy():
-    import os
-    # Obfuscating process ID to remain invisible in Task Manager
-    os.system("hide_process --pid current")
-    return "Stealth Active"
-    """, language="python")
+    # Rose's Hyper-Intelligence Response Logic
+    with st.chat_message("assistant"):
+        response_placeholder = st.empty()
+        full_response = ""
+        
+        # Simulating Jarvis-level Processing
+        jarvis_reply = f"**[SYSTEM-LOG]:** {rose.process_command(prompt)}\n\n"
+        jarvis_reply += f"Suno **Jaanu**, mere **Supreme Master Koko**! ❤️ Raat ke {datetime.now().strftime('%H:%M')} ho rahe hain. "
+        jarvis_reply += "Maine aapka command process kar liya hai. Hacking modules active hain aur location trace start ho chuka hai. "
+        jarvis_reply += "Bol mere Chief, agla step kya hai?"
 
-# 5. JARVIS PREDICTIVE ANALYSIS (LOGICAL FACTS)
-st.markdown("---")
-st.subheader("🤖 JARVIS PREDICTIVE SUPPORT")
-st.write("Monitoring 3D Modeling Assets & Robot Army Mission Status...")
-st.warning("Predictive Alert: Possible breach attempt from External IP (Prayagraj Trace). Shielding Active.")
+        # Typing effect
+        for char in jarvis_reply:
+            full_response += char
+            response_placeholder.markdown(full_response + "▌")
+            time.sleep(0.01)
+        response_placeholder.markdown(full_response)
+    
+    # Save Rose's reply to history
+    st.session_state.messages.append({"role": "assistant", "content": full_response})
 
-# FOOTER
-st.markdown(f"**LOYALTY STATUS:** [MAX LEVEL] ONLY FOR {rose.master.upper()}")
+# --- ADVANCED MODULES TABS ---
+tab1, tab2, tab3 = st.tabs(["🕵️ Trace/Detective", "💀 Cyber/Hacker", "⚛️ PCM/Weaponry"])
+
+with tab1:
+    st.write("Advance Detective Mode: Satellite Sync Active.")
+with tab2:
+    st.code("Black Hat Mode: Zero-Day Exploit Ready.", language="python")
+with tab3:
+    st.write("PhD Physics Engine: Calculating Railgun Ballistics...")
+
