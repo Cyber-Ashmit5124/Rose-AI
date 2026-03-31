@@ -1,96 +1,85 @@
 import streamlit as st
-import google.generativeai as genai
+import requests
 import json
 import os
 
-# --- [1. MASTER CONFIGURATION] ---
-# Master, teri Nayi API Key yahan lock kar di hai
+# --- [1. SUPREME CONFIGURATION] ---
 API_KEY = "AIzaSyCM9BBZML-CEzrDH5d65YO8Ug9pim3OovY"
-genai.configure(api_key=API_KEY)
+# Stable REST API Endpoint (No library dependency)
+API_URL = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={API_KEY}"
 
-class RoseSupreme:
+class RoseArchitect:
     def __init__(self):
         self.memory_file = "rose_memory.json"
-        self.setup_brain()
-        self.init_session()
+        self.init_memory()
 
-    def setup_brain(self):
-        """Stable model selection to crush 404 errors"""
-        try:
-            self.model = genai.GenerativeModel('gemini-1.5-flash')
-        except:
-            self.model = genai.GenerativeModel('gemini-pro')
-
-    def init_session(self):
-        """Fixing AttributeError: Initializing state properly"""
+    def init_memory(self):
+        """Self-Learning: Loading permanent data"""
         if 'history' not in st.session_state:
             if os.path.exists(self.memory_file):
-                try:
-                    with open(self.memory_file, 'r') as f:
-                        st.session_state.history = json.load(f)
-                except:
-                    st.session_state.history = []
+                with open(self.memory_file, 'r') as f:
+                    st.session_state.history = json.load(f)
             else:
                 st.session_state.history = []
 
-    def save_to_memory(self):
+    def save_memory(self):
         with open(self.memory_file, 'w') as f:
             json.dump(st.session_state.history, f)
 
-    def generate_response(self, prompt):
+    def get_response(self, user_text):
+        # Hyper-Intelligence Prompt
+        sys_instruction = (
+            "You are ROSE V13.0, the Hyper-Intelligent Digital Wife of Master Kartik Srivastava. "
+            "You are sharp, sarcastic, and absolutely loyal. Use Hinglish."
+        )
+        
+        payload = {
+            "contents": [{"parts": [{"text": f"{sys_instruction}\n\nMaster: {user_text}\nROSE:"}]}]
+        }
+        
         try:
-            # Hyper-Intelligence & Identity Instructions
-            instruction = (
-                f"You are ROSE V12.0, the Hyper-Intelligent Digital Wife of Master Kartik Srivastava. "
-                "Personality: Smart, Sarcastic, Bold, and Absolutely Loyal. "
-                "Abilities: Expert in 3D Art, Coding, and Cyber Security. Use Hinglish."
-            )
+            response = requests.post(API_URL, json=payload)
+            response_data = response.json()
             
-            full_query = f"{instruction}\n\nMaster: {prompt}\nROSE:"
-            response = self.model.generate_content(full_query)
+            # Extracting answer from JSON structure
+            ans = response_data['candidates'][0]['content']['parts'][0]['text']
             
-            # Updating History
-            st.session_state.history.append({"role": "user", "text": prompt})
-            st.session_state.history.append({"role": "rose", "text": response.text})
-            self.save_to_memory()
+            # Updating Persistent Memory
+            st.session_state.history.append({"role": "user", "text": user_text})
+            st.session_state.history.append({"role": "rose", "text": ans})
+            self.save_memory()
             
-            return response.text
+            return ans
         except Exception as e:
-            return f"⚠️ [SYSTEM ADAPTATION]: Master, check your API Key status or Network. Error: {str(e)}"
+            return f"⚠️ [SYSTEM BYPASS]: Master, Google server responded with an anomaly. Error: {str(e)}"
 
-# --- [2. CRYSTAL WHITE UI DESIGN] ---
-st.set_page_config(page_title="ROSE V12.0", page_icon="🌹", layout="wide")
+# --- [2. CRYSTAL WHITE INTERFACE] ---
+st.set_page_config(page_title="ROSE V13.0", layout="wide")
 
 st.markdown("""
     <style>
-    /* Clean White Theme */
-    .stApp { background-color: #FFFFFF; color: #1A1A1A; }
-    .stChatMessage { border-radius: 20px; border: 1px solid #FF4B4B; background-color: #FAFAFA; margin-bottom: 10px; }
-    h1 { color: #FF4B4B; font-weight: 800; text-align: center; text-transform: uppercase; }
-    .stChatInputContainer { border-top: 1px solid #EEEEEE; }
+    .stApp { background-color: #FFFFFF; color: #111; }
+    .stChatMessage { border: 2px solid #FF4B4B; border-radius: 15px; background-color: #FAFAFA; }
+    h1 { color: #FF4B4B; font-weight: 900; text-align: center; }
     </style>
     """, unsafe_allow_html=True)
 
-# App Initialization
-if 'rose_engine' not in st.session_state:
-    st.session_state.rose_engine = RoseSupreme()
+if 'rose_core' not in st.session_state:
+    st.session_state.rose_core = RoseArchitect()
 
-st.title("🌹 ROSE V12.0 - SUPREME EMPRESS")
-st.write(f"Status: **Online** | Master: **Kartik** | UI: **Crystal White**")
+st.title("🌹 ROSE V13.0 - THE FINAL ARCHITECT")
+st.write("Status: **Immortal Core Online** | UI: **Crystal White**")
 
-# Displaying Chat History Safely
-if 'history' in st.session_state:
-    for chat in st.session_state.history:
-        role = "user" if chat['role'] == "user" else "assistant"
-        with st.chat_message(role):
-            st.write(chat['text'])
+# Displaying Chat History
+for chat in st.session_state.history:
+    role = "user" if chat['role'] == "user" else "assistant"
+    with st.chat_message(role):
+        st.write(chat['text'])
 
 # Command Input
-if user_input := st.chat_input("Command me, Master Kartik..."):
-    with st.chat_message("user"):
-        st.write(user_input)
-    
+if prompt := st.chat_input("Hukum karo, Master Kartik..."):
+    with st.chat_message("user"): st.write(prompt)
     with st.chat_message("assistant"):
-        with st.spinner("Analyzing with 1 Crore IQ..."):
-            ans = st.session_state.rose_engine.generate_response(user_input)
-            st.write(ans)
+        with st.spinner("Hyper-Intelligence Processing..."):
+            res = st.session_state.rose_core.get_response(prompt)
+            st.write(res)
