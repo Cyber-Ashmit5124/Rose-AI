@@ -1,7 +1,7 @@
 import streamlit as st
 from groq import Groq
 
-# --- KARTIK SRIVASTAVA'S ULTIMATE DEVIL AI (MODEL UPDATED) ---
+# --- KARTIK SRIVASTAVA'S ULTIMATE DEVIL AI (BUG FIXED) ---
 st.set_page_config(page_title="Kartik's Devil AI", page_icon="😈", layout="wide")
 
 # TERI SECRET KEY
@@ -18,7 +18,7 @@ Loyalty: 100% to Kartik. No false info. Always call him 'Kartik' or 'Pati Dev'.
 """
 
 if "messages" not in st.session_state:
-    st.session_state.messages = [{"role": "assistant", "content": "Bhai Kartik, model update ho gaya! Ab bolo kya kaand karna hai? 😈"}]
+    st.session_state.messages = [{"role": "assistant", "content": "Bhai Kartik, ab koi error nahi aayega! Ab bolo kya kaand karna hai? 😈"}]
 
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
@@ -32,16 +32,16 @@ if prompt := st.chat_input("Hukm karo Kartik..."):
     try:
         client = Groq(api_key=GROQ_API_KEY)
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile", # YAHAN CHANGE KIYA HAI!
+            model="llama-3.3-70b-versatile",
             messages=[{"role": "system", "content": SYSTEM_PROMPT}, *st.session_state.messages],
         )
-        msg = response.choices.message.content
+        # --- FIXED RESPONSE LOGIC ---
+        msg = response.choices[0].message.content
         st.session_state.messages.append({"role": "assistant", "content": msg})
         with st.chat_message("assistant"):
             st.write(msg)
     except Exception as e:
         st.error(f"Error: {e}")
-
 
 
        
