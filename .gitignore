@@ -1,0 +1,5 @@
+rose_os/__pycache__/
+__pycache__/
+*.pyc
+dist/
+build/
