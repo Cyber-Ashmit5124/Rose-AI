@@ -26,11 +26,16 @@ class RoseConfig:
 
     # ── Voice ───────────────────────────────────────────────────
     voice_language: str = "hi"  # Hindi
-    voice_rate: int = 175  # words per minute
+    voice_rate: int = 175  # words per minute (legacy pyttsx3)
     voice_volume: float = 1.0
     wake_word: str = "rose"
     listen_timeout: int = 5  # seconds
     phrase_time_limit: int = 10  # seconds
+
+    # ── Edge TTS (Natural Voice) ─────────────────────────────────
+    voice_rate_edge: str = "+0%"  # speed adjustment (-50% to +100%)
+    voice_volume_edge: str = "+0%"  # volume adjustment
+    voice_name_edge: str = "hi-IN-SwaraNeural"  # Natural Indian Female
 
     # ── System Monitor ──────────────────────────────────────────
     monitor_interval: int = 3  # seconds between refreshes
