@@ -17,6 +17,11 @@
 | 🚨 **Smart Alerts** | Auto-warnings when CPU/RAM/Temp exceed safe thresholds |
 | 🖥️ **Dark GUI** | CustomTkinter command center with chat + system panel |
 | 📦 **Portable** | Build as `.exe` with PyInstaller — runs on any Windows PC |
+| 🌹 **System Tray** | Rose lives in taskbar 24/7 — close window, she's still there |
+| 🚀 **Auto-Start** | Optional Windows startup — Rose boots with your PC |
+| ⌨️ **Global Hotkey** | Press `Ctrl+Shift+R` anywhere to summon Rose instantly |
+| 🔔 **Notifications** | Windows notification balloons for alerts & status |
+| 💿 **Installer** | Proper Windows installer with Start Menu & Desktop shortcuts |
 
 ---
 
@@ -56,12 +61,25 @@ python -m rose_os
 
 ---
 
-## 🏗️ Build Portable `.exe`
+## 🏗️ Build & Install
 
+### Option 1: Portable `.exe`
 ```bash
 pyinstaller rose_os_build.spec
 # Output: dist/ROSE_OS_AI.exe
 ```
+
+### Option 2: Windows Installer
+1. Build the `.exe` first (above)
+2. Install [Inno Setup](https://jrsoftware.org/isinfo.php)
+3. Open `installer/rose_installer.iss` in Inno Setup
+4. Click Build → Get `ROSE_OS_AI_Setup_v1.0.exe`
+
+The installer creates:
+- Start Menu shortcut
+- Desktop shortcut (optional)
+- Auto-start with Windows (optional)
+- Clean uninstall from Control Panel
 
 ---
 
@@ -78,7 +96,12 @@ Rose-AI/
 │   ├── voice_recognition.py # Speech-to-Text
 │   ├── voice_synthesis.py   # Text-to-Speech
 │   ├── system_monitor.py    # CPU/RAM/GPU/Temp monitor
-│   └── gui.py               # CustomTkinter GUI
+│   ├── gui.py               # CustomTkinter GUI
+│   ├── tray.py              # System tray icon
+│   ├── autostart.py         # Windows auto-start
+│   └── hotkey.py            # Global keyboard shortcut
+├── installer/
+│   └── rose_installer.iss   # Inno Setup installer script
 ├── assets/                  # Icons & resources
 ├── streamlit_app.py         # Legacy Streamlit version
 ├── setup.py                 # Package setup

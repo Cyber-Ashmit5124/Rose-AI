@@ -13,6 +13,9 @@ from typing import TYPE_CHECKING
 import customtkinter as ctk
 
 from rose_os.config import config
+from rose_os.tray import RoseTray
+from rose_os.autostart import is_autostart_enabled, enable_autostart, disable_autostart
+from rose_os.hotkey import GlobalHotkey
 
 if TYPE_CHECKING:
     from rose_os.persona import RosePersona
@@ -42,6 +45,8 @@ class RoseGUI(ctk.CTk):
         self._setup_window()
         self._build_layout()
         self._start_monitor_refresh()
+        self._setup_tray()
+        self._setup_hotkey()
         self._greet()
 
     # ── window setup ─────────────────────────────────────────────
@@ -104,6 +109,26 @@ class RoseGUI(ctk.CTk):
             fg_color="#555",
             hover_color="#777",
         ).pack(pady=4, padx=10, fill="x")
+
+        # auto-start toggle
+        self._autostart_var = ctk.BooleanVar(value=is_autostart_enabled())
+        self.autostart_check = ctk.CTkCheckBox(
+            left,
+            text="🚀 Start with Windows",
+            variable=self._autostart_var,
+            command=self._toggle_autostart,
+            fg_color=config.accent_color,
+            hover_color="#b5202e",
+        )
+        self.autostart_check.pack(pady=8, padx=10, fill="x")
+
+        # hotkey label
+        ctk.CTkLabel(
+            left,
+            text="⌨️ Summon: Ctrl+Shift+R",
+            font=ctk.CTkFont(size=11),
+            text_color="#888",
+        ).pack(pady=(4, 8))
 
         # ── RIGHT: chat area ────────────────────────────────────
         right = ctk.CTkFrame(self, corner_radius=0)
@@ -222,10 +247,73 @@ class RoseGUI(ctk.CTk):
 
         self.after(config.monitor_interval * 1000, self._refresh_system_panel)
 
+    # ── system tray ──────────────────────────────────────────────
+
+    def _setup_tray(self) -> None:
+        self._tray = RoseTray(
+            on_show=self._show_from_tray,
+            on_quit=self._full_quit,
+            on_status=lambda: self.monitor.format_snapshot(),
+        )
+        self._tray.start()
+
+    def _show_from_tray(self) -> None:
+        self.after(0, self._restore_window)
+
+    def _restore_window(self) -> None:
+        self.deiconify()
+        self.lift()
+        self.focus_force()
+
+    # ── global hotkey ────────────────────────────────────────────
+
+    def _setup_hotkey(self) -> None:
+        self._hotkey = GlobalHotkey()
+        self._hotkey.register(
+            GlobalHotkey.DEFAULT_SUMMON,
+            lambda: self.after(0, self._restore_window),
+        )
+        self._hotkey.start_listener()
+
+    # ── autostart toggle ─────────────────────────────────────────
+
+    def _toggle_autostart(self) -> None:
+        if self._autostart_var.get():
+            if enable_autostart():
+                self._append_chat(
+                    "🌹 Rose",
+                    "Auto-start ON! Ab main Windows ke saath boot houngi Chief! 🚀",
+                )
+            else:
+                self._autostart_var.set(False)
+                self._append_chat(
+                    "🌹 Rose",
+                    "Auto-start set nahi ho paya — admin rights check karo Chief.",
+                )
+        else:
+            disable_autostart()
+            self._append_chat(
+                "🌹 Rose", "Auto-start OFF kar diya Chief."
+            )
+
     # ── cleanup ──────────────────────────────────────────────────
 
     def _on_close(self) -> None:
+        """Minimize to tray instead of quitting."""
+        self.withdraw()
+        if hasattr(self, "_tray"):
+            self._tray.notify(
+                "ROSE OS AI",
+                "Main tray mein hoon Chief! Right-click se access karo.",
+            )
+
+    def _full_quit(self) -> None:
+        """Actually exit the application."""
         self.voice_listener.stop_continuous()
         self.voice_synth.stop()
         self.monitor.stop()
+        if hasattr(self, "_hotkey"):
+            self._hotkey.stop()
+        if hasattr(self, "_tray"):
+            self._tray.stop()
         self.destroy()
