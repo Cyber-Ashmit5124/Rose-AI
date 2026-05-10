@@ -22,6 +22,8 @@ a = Analysis(
         "pystray",
         "PIL",
         "keyboard",
+        "edge_tts",
+        "pygame",
     ],
     hookspath=[],
     hooksconfig={},
