@@ -35,8 +35,9 @@ class PCController:
         if not IS_WINDOWS:
             return "Chief, yeh feature sirf Windows pe kaam karta hai."
 
-        # Common app mappings
+        # Common app mappings — generic commands + Chief's actual installed paths
         app_map: dict[str, str] = {
+            # ── Windows Built-in ─────────────────────────────
             "chrome": "chrome",
             "google chrome": "chrome",
             "browser": "chrome",
@@ -53,22 +54,33 @@ class PCController:
             "task manager": "taskmgr",
             "control panel": "control",
             "settings": "ms-settings:",
-            "maya": "maya",
+            # ── Chief's 3D Software (Actual Installed Paths) ─
+            "maya": r'"C:\Program Files\Autodesk\Maya2024\bin\maya.exe"',
+            "maya 2024": r'"C:\Program Files\Autodesk\Maya2024\bin\maya.exe"',
+            "maya 2023": r'"C:\Program Files\Autodesk\Maya2023\bin\maya.exe"',
+            "blender": r'"C:\Program Files\Blender Foundation\Blender 4.5\blender.exe"',
             "zbrush": "zbrush",
             "substance painter": "Substance Painter",
-            "blender": "blender",
-            "photoshop": "photoshop",
+            "substance": "Substance Painter",
+            # ── Development Tools ────────────────────────────
             "vs code": "code",
             "vscode": "code",
             "pycharm": "pycharm64",
+            "python": "python",
+            # ── Office ───────────────────────────────────────
+            "libreoffice": r'"C:\Program Files\LibreOffice\program\soffice.exe"',
+            "writer": r'"C:\Program Files\LibreOffice\program\soffice.exe" --writer',
             "word": "winword",
             "excel": "excel",
             "powerpoint": "powerpnt",
+            # ── Communication & Entertainment ────────────────
             "discord": "discord",
             "spotify": "spotify",
             "steam": "steam",
             "obs": "obs64",
             "vlc": "vlc",
+            "teams": "teams",
+            "briar": "briar",
         }
 
         cmd = app_map.get(app_name.lower(), app_name)
